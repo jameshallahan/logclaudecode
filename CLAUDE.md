@@ -120,7 +120,13 @@ Auth guard on all routes except `/onboarding`. If `onboarding_done = false`, red
 - [x] Weekly.jsx complete
 - [x] PWA configured (PNG icons, apple-touch-icon, viewport-fit)
 - [x] Routing complete (error boundary added)
-- [ ] Polish pass (handle already-logged-today, page transitions, Whisper retry UX)
+- [x] Polish pass: already-logged-today detection (Morning + Evening)
+- [x] Polish pass: page transitions (fadeSlideIn on routes + question steps)
+- [x] Polish pass: Whisper retry UX (retry button on transcription failure)
+- [x] Polish pass: Morning structured data cleanup (single `morning_response` field)
+- [x] Polish pass: Audio blob storage (Supabase Storage upload + migration SQL)
+- [ ] Move API keys server-side (Edge Function or Vercel API route)
+- [ ] Capacitor setup (App Store distribution)
 
 Update this checklist as steps are completed.
 

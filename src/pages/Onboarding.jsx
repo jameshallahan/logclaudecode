@@ -106,7 +106,7 @@ export default function Onboarding() {
   // Welcome screen
   if (step === 'welcome') {
     return (
-      <div className="min-h-screen bg-[#0D0D0D] flex flex-col items-center justify-center px-6">
+      <div className="min-h-screen bg-[#0D0D0D] flex flex-col items-center justify-center px-6 animate-page-in">
         <div className="w-full max-w-sm text-center">
           <h1 className="text-2xl font-semibold text-[#F0F0F0] mb-4">Welcome to The Log</h1>
           <p className="text-sm text-[#888888] leading-relaxed mb-6">
@@ -137,7 +137,7 @@ export default function Onboarding() {
     const hasTranscript = !!transcripts[currentKey]
 
     return (
-      <div className="min-h-screen bg-[#0D0D0D] flex flex-col">
+      <div className="min-h-screen bg-[#0D0D0D] flex flex-col animate-page-in">
         {/* Progress bar */}
         <div className="h-1 bg-[#1A1A1A]">
           <div
@@ -147,7 +147,7 @@ export default function Onboarding() {
         </div>
 
         <div className="flex-1 flex flex-col items-center justify-center px-6">
-          <div className="w-full max-w-sm">
+          <div key={questionIndex} className="w-full max-w-sm animate-page-in">
             <p className="text-xs text-[#888888] mb-4 text-center">
               {questionIndex + 1} of {QUESTIONS.length}
             </p>
@@ -189,7 +189,7 @@ export default function Onboarding() {
 
   // Review + saving
   return (
-    <div className="min-h-screen bg-[#0D0D0D] flex flex-col items-center justify-center px-6">
+    <div className="min-h-screen bg-[#0D0D0D] flex flex-col items-center justify-center px-6 animate-page-in">
       <div className="w-full max-w-sm">
         <h2 className="text-lg font-semibold text-[#F0F0F0] text-center mb-6">
           {step === 'saving' ? 'Setting up your profile...' : 'Your coaching profile'}

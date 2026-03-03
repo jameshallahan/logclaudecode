@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase } from '../lib/supabase'
+import { supabase, uploadAudioBlob } from '../lib/supabase'
 import { callClaude } from '../lib/claude'
 import { buildEveningParsePrompt, buildEveningSynthesisPrompt } from '../lib/prompts'
 import { useTodayLog } from '../hooks/useTodayLog'
@@ -29,9 +29,40 @@ export default function Evening() {
   const [processing, setProcessing] = useState(false)
   const [done, setDone] = useState(false)
   const [error, setError] = useState(null)
+  const [alreadyDone, setAlreadyDone] = useState(false)
+  const [existingSynthesis, setExistingSynthesis] = useState('')
+  const [blobs, setBlobs] = useState([])
+  const [checkingLog, setCheckingLog] = useState(true)
 
-  const handleTranscript = useCallback((text) => {
+  useEffect(() => {
+    let cancelled = false
+    async function checkExisting() {
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) { setCheckingLog(false); return }
+
+        const { data: existingLog } = await supabase
+          .from('daily_logs')
+          .select('structured')
+          .eq('user_id', user.id)
+          .eq('log_date', getTodayDate())
+          .eq('type', 'evening')
+          .maybeSingle()
+
+        if (!cancelled && existingLog) {
+          setAlreadyDone(true)
+          setExistingSynthesis(existingLog.structured?.synthesis || '')
+        }
+      } catch { /* no existing log */ }
+      if (!cancelled) setCheckingLog(false)
+    }
+    checkExisting()
+    return () => { cancelled = true }
+  }, [])
+
+  const handleTranscript = useCallback((text, audioBlob) => {
     setTranscripts((prev) => [...prev, text])
+    if (audioBlob) setBlobs((prev) => [...prev, audioBlob])
   }, [])
 
   const handleNext = async () => {
@@ -78,13 +109,23 @@ export default function Evening() {
       const synthResponse = await callClaude(synthPrompt, 'Close out the evening log.')
       setSynthesis(synthResponse)
 
+      // Upload audio blobs
+      const audioUrls = []
+      for (let i = 0; i < blobs.length; i++) {
+        try {
+          const url = await uploadAudioBlob(user.id, getTodayDate(), `evening-${i + 1}`, blobs[i])
+          audioUrls.push(url)
+        } catch { /* don't block save if upload fails */ }
+      }
+
       // Save to database
       await supabase.from('daily_logs').insert({
         user_id: user.id,
         log_date: getTodayDate(),
         type: 'evening',
         transcript: allTranscripts,
-        structured,
+        structured: { ...structured, synthesis: synthResponse, audio_urls: audioUrls },
+        audio_url: audioUrls[0] || null,
       })
 
       setDone(true)
@@ -93,6 +134,37 @@ export default function Evening() {
     } finally {
       setProcessing(false)
     }
+  }
+
+  if (checkingLog) {
+    return (
+      <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+      </div>
+    )
+  }
+
+  if (alreadyDone) {
+    return (
+      <div className="min-h-screen bg-[#0D0D0D] flex flex-col items-center justify-center px-6 animate-page-in">
+        <div className="w-full max-w-sm text-center">
+          <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-5 mb-6">
+            <p className="text-sm text-[#F0F0F0] leading-relaxed whitespace-pre-wrap">
+              {existingSynthesis || "You've already logged this evening."}
+            </p>
+          </div>
+          {streak > 0 && (
+            <p className="text-sm text-[#888888] mb-6">{streak} day streak</p>
+          )}
+          <button
+            onClick={() => navigate('/')}
+            className="w-full h-12 bg-white text-[#0D0D0D] font-semibold rounded-xl hover:bg-[#E0E0E0] active:scale-[0.98] transition-all"
+          >
+            Back to home
+          </button>
+        </div>
+      </div>
+    )
   }
 
   if (error) {
@@ -118,7 +190,7 @@ export default function Evening() {
   // Done state — show synthesis
   if (done) {
     return (
-      <div className="min-h-screen bg-[#0D0D0D] flex flex-col items-center justify-center px-6">
+      <div className="min-h-screen bg-[#0D0D0D] flex flex-col items-center justify-center px-6 animate-page-in">
         <div className="w-full max-w-sm text-center">
           <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-5 mb-6">
             <p className="text-sm text-[#F0F0F0] leading-relaxed whitespace-pre-wrap">{synthesis}</p>
@@ -155,7 +227,7 @@ export default function Evening() {
   const hasCurrentTranscript = transcripts.length > promptIndex
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] flex flex-col">
+    <div className="min-h-screen bg-[#0D0D0D] flex flex-col animate-page-in">
       {/* Progress bar */}
       <div className="h-1 bg-[#1A1A1A]">
         <div
@@ -175,7 +247,7 @@ export default function Evening() {
       </div>
 
       <div className="flex-1 flex flex-col items-center justify-center px-6">
-        <div className="w-full max-w-sm">
+        <div key={promptIndex} className="w-full max-w-sm animate-page-in">
           <p className="text-xs text-[#888888] mb-4 text-center">
             {promptIndex + 1} of {EVENING_PROMPTS.length}
           </p>
@@ -196,7 +268,7 @@ export default function Evening() {
                 {promptIndex < EVENING_PROMPTS.length - 1 ? 'Next' : 'Finish log'}
               </button>
               <button
-                onClick={() => setTranscripts((prev) => prev.slice(0, -1))}
+                onClick={() => { setTranscripts((prev) => prev.slice(0, -1)); setBlobs((prev) => prev.slice(0, -1)) }}
                 className="w-full h-10 text-[#888888] text-sm hover:text-[#F0F0F0] transition-colors"
               >
                 Re-record

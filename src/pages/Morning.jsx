@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase } from '../lib/supabase'
+import { supabase, uploadAudioBlob } from '../lib/supabase'
 import { callClaude } from '../lib/claude'
 import { buildMorningPrompt, buildWorkoutPrompt } from '../lib/prompts'
 import { useUserProfile } from '../hooks/useUserProfile'
@@ -43,6 +43,8 @@ export default function Morning() {
   const [responded, setResponded] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
+  const [alreadyDone, setAlreadyDone] = useState(false)
+  const [existingResponse, setExistingResponse] = useState('')
 
   useEffect(() => {
     if (!profile) return
@@ -54,6 +56,37 @@ export default function Morning() {
         if (!user) return
 
         const today = getTodayDate()
+
+        // Check for existing morning log — avoid re-generating
+        const { data: existingLog } = await supabase
+          .from('daily_logs')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('log_date', today)
+          .eq('type', 'morning')
+          .maybeSingle()
+
+        if (existingLog) {
+          const { data: todayWorkout } = await supabase
+            .from('workouts')
+            .select('workout_json')
+            .eq('user_id', user.id)
+            .eq('workout_date', today)
+            .maybeSingle()
+
+          if (cancelled) return
+          setWorkout(todayWorkout?.workout_json || null)
+          setExistingResponse(existingLog.transcript || '')
+          try {
+            const cached = JSON.parse(localStorage.getItem('morning_cache') || 'null')
+            if (cached && cached.date === today) {
+              setMorningText(cached.morningText)
+            }
+          } catch { /* ignore */ }
+          setAlreadyDone(true)
+          setLoading(false)
+          return
+        }
 
         // Check for existing workout
         let { data: existingWorkout } = await supabase
@@ -176,21 +209,26 @@ export default function Morning() {
     return () => { cancelled = true }
   }, [profile])
 
-  const handleResponse = useCallback(async (transcript) => {
+  const handleResponse = useCallback(async (transcript, audioBlob) => {
     setSaving(true)
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Not authenticated')
+
+      let audioUrl = null
+      if (audioBlob) {
+        try {
+          audioUrl = await uploadAudioBlob(user.id, getTodayDate(), 'morning', audioBlob)
+        } catch { /* don't block save if upload fails */ }
+      }
 
       await supabase.from('daily_logs').insert({
         user_id: user.id,
         log_date: getTodayDate(),
         type: 'morning',
         transcript,
-        structured: {
-          response_to_question: transcript,
-          readiness_notes: transcript,
-        },
+        structured: { morning_response: transcript },
+        audio_url: audioUrl,
       })
 
       setResponded(true)
@@ -215,8 +253,38 @@ export default function Morning() {
     )
   }
 
+  if (alreadyDone) {
+    return (
+      <div className="min-h-screen bg-[#0D0D0D] flex flex-col px-6 py-6 animate-page-in">
+        <button
+          onClick={() => navigate('/')}
+          className="text-sm text-[#888888] hover:text-[#F0F0F0] self-start mb-6"
+        >
+          ← Back
+        </button>
+        <h1 className="text-lg font-semibold text-[#F0F0F0] mb-6">Morning check-in</h1>
+        <div className="space-y-4">
+          {morningText && <PromptCard title="Coach's note" text={morningText} loading={false} />}
+          <WorkoutCard workout={workout} loading={false} />
+          <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-5 text-center">
+            <p className="text-sm text-[#F0F0F0] mb-2">You already checked in this morning.</p>
+            {existingResponse && (
+              <p className="text-xs text-[#888888] mt-2 leading-relaxed">{existingResponse}</p>
+            )}
+            <button
+              onClick={() => navigate('/')}
+              className="mt-4 text-sm text-[#888888] hover:text-[#F0F0F0]"
+            >
+              Back to home
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="min-h-screen bg-[#0D0D0D] flex flex-col px-6 py-6">
+    <div className="min-h-screen bg-[#0D0D0D] flex flex-col px-6 py-6 animate-page-in">
       {/* Back button */}
       <button
         onClick={() => navigate('/')}

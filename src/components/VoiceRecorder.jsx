@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useVoiceRecorder } from '../hooks/useVoiceRecorder'
 import { transcribeAudio } from '../lib/whisper'
 
@@ -7,6 +7,7 @@ export default function VoiceRecorder({ onTranscript, disabled = false }) {
   const [transcribing, setTranscribing] = useState(false)
   const [transcribeError, setTranscribeError] = useState(null)
   const [elapsed, setElapsed] = useState(0)
+  const lastBlobRef = useRef(null)
 
   useEffect(() => {
     let interval
@@ -19,6 +20,7 @@ export default function VoiceRecorder({ onTranscript, disabled = false }) {
 
   useEffect(() => {
     if (!blob) return
+    lastBlobRef.current = blob
 
     let cancelled = false
     async function transcribe() {
@@ -26,7 +28,7 @@ export default function VoiceRecorder({ onTranscript, disabled = false }) {
       setTranscribeError(null)
       try {
         const text = await transcribeAudio(blob)
-        if (!cancelled) onTranscript(text)
+        if (!cancelled) onTranscript(text, blob)
       } catch (err) {
         if (!cancelled) setTranscribeError(err.message)
       } finally {
@@ -36,6 +38,20 @@ export default function VoiceRecorder({ onTranscript, disabled = false }) {
     transcribe()
     return () => { cancelled = true }
   }, [blob, onTranscript])
+
+  const handleRetry = async () => {
+    if (!lastBlobRef.current) return
+    setTranscribing(true)
+    setTranscribeError(null)
+    try {
+      const text = await transcribeAudio(lastBlobRef.current)
+      onTranscript(text, lastBlobRef.current)
+    } catch (err) {
+      setTranscribeError(err.message)
+    } finally {
+      setTranscribing(false)
+    }
+  }
 
   const formatTime = (s) => {
     const m = Math.floor(s / 60)
@@ -94,7 +110,18 @@ export default function VoiceRecorder({ onTranscript, disabled = false }) {
       )}
 
       {(error || transcribeError) && (
-        <p className="text-sm text-[#FF3B30]">{error || transcribeError}</p>
+        <div className="flex flex-col items-center gap-2">
+          <p className="text-sm text-[#FF3B30]">{error || transcribeError}</p>
+          {transcribeError && (
+            <button
+              onClick={handleRetry}
+              disabled={transcribing}
+              className="text-sm text-[#888888] hover:text-[#F0F0F0] transition-colors"
+            >
+              Retry transcription
+            </button>
+          )}
+        </div>
       )}
     </div>
   )

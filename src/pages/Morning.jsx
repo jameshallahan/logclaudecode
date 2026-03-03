@@ -12,6 +12,28 @@ function getTodayDate() {
   return new Date().toISOString().split('T')[0]
 }
 
+function parseSplit(splitString) {
+  if (!splitString) return ['Full Body']
+  // Handle common formats: "Push/Pull/Legs", "Push, Pull, Legs", "Upper Lower"
+  const parts = splitString.split(/[/,]|\band\b/i).map((s) => s.trim()).filter(Boolean)
+  return parts.length > 0 ? parts : ['Full Body']
+}
+
+function getNextSessionType(splitTypes, recentWorkouts) {
+  if (splitTypes.length <= 1) return splitTypes[0]
+  if (!recentWorkouts || recentWorkouts.length === 0) return splitTypes[0]
+
+  // Find the last session type from recent workouts
+  const lastType = recentWorkouts[0]?.workout_json?.session_type
+  if (!lastType) return splitTypes[0]
+
+  // Find where we are in the rotation and advance
+  const lowerSplits = splitTypes.map((s) => s.toLowerCase())
+  const lastIndex = lowerSplits.indexOf(lastType.toLowerCase())
+  if (lastIndex === -1) return splitTypes[0]
+  return splitTypes[(lastIndex + 1) % splitTypes.length]
+}
+
 export default function Morning() {
   const navigate = useNavigate()
   const { profile } = useUserProfile()
@@ -42,15 +64,21 @@ export default function Morning() {
           .single()
 
         if (!existingWorkout) {
-          // Generate a workout
-          const sessionType = profile.training_split || 'Full Body'
-          const { data: lastSession } = await supabase
+          // Determine next session type from split rotation
+          const splitTypes = parseSplit(profile.training_split)
+          const { data: recentWorkouts } = await supabase
             .from('workouts')
             .select('workout_json')
             .eq('user_id', user.id)
             .order('workout_date', { ascending: false })
-            .limit(1)
-            .single()
+            .limit(3)
+
+          const sessionType = getNextSessionType(splitTypes, recentWorkouts || [])
+
+          // Get last session of this specific type for progression
+          const lastSession = (recentWorkouts || []).find(
+            (w) => w.workout_json?.session_type?.toLowerCase() === sessionType.toLowerCase()
+          ) || null
 
           const { data: lastEvening } = await supabase
             .from('daily_logs')
@@ -117,9 +145,27 @@ export default function Morning() {
         if (!cancelled) {
           setMorningText(text)
           setLoading(false)
+          // Cache for offline access
+          try {
+            localStorage.setItem('morning_cache', JSON.stringify({
+              date: today,
+              morningText: text,
+              workout: existingWorkout?.workout_json || null,
+            }))
+          } catch { /* storage full — ignore */ }
         }
       } catch (err) {
         if (!cancelled) {
+          // Try loading from offline cache
+          try {
+            const cached = JSON.parse(localStorage.getItem('morning_cache') || 'null')
+            if (cached && cached.date === getTodayDate()) {
+              setMorningText(cached.morningText)
+              setWorkout(cached.workout)
+              setLoading(false)
+              return
+            }
+          } catch { /* bad cache — ignore */ }
           setError(err.message)
           setLoading(false)
         }

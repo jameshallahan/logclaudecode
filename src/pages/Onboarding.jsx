@@ -20,6 +20,7 @@ const QUESTION_KEYS = ['goals', 'training', 'baseline', 'constraints', 'sleep', 
 export default function Onboarding() {
   const navigate = useNavigate()
   const [step, setStep] = useState('welcome') // welcome | questions | review | saving
+  const [name, setName] = useState('')
   const [questionIndex, setQuestionIndex] = useState(0)
   const [transcripts, setTranscripts] = useState({})
   const [profileSummary, setProfileSummary] = useState('')
@@ -83,7 +84,7 @@ export default function Onboarding() {
         .from('user_profiles')
         .upsert({
           id: user.id,
-          name: '',
+          name: name.trim(),
           goals: transcripts.goals || '',
           training_split: transcripts.training || '',
           baseline: transcripts.baseline || '',
@@ -108,12 +109,20 @@ export default function Onboarding() {
       <div className="min-h-screen bg-[#0D0D0D] flex flex-col items-center justify-center px-6">
         <div className="w-full max-w-sm text-center">
           <h1 className="text-2xl font-semibold text-[#F0F0F0] mb-4">Welcome to The Log</h1>
-          <p className="text-sm text-[#888888] leading-relaxed mb-8">
+          <p className="text-sm text-[#888888] leading-relaxed mb-6">
             I'm going to ask you 7 quick questions to understand who you are, how you train, and what you're working towards. Just talk — no typing needed.
           </p>
+          <input
+            type="text"
+            placeholder="Your first name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full h-12 bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl px-4 text-sm text-[#F0F0F0] placeholder-[#888888] outline-none focus:border-[#888888] transition-colors mb-4 text-center"
+          />
           <button
             onClick={() => setStep('questions')}
-            className="w-full h-12 bg-white text-[#0D0D0D] font-semibold rounded-xl hover:bg-[#E0E0E0] active:scale-[0.98] transition-all"
+            disabled={!name.trim()}
+            className="w-full h-12 bg-white text-[#0D0D0D] font-semibold rounded-xl hover:bg-[#E0E0E0] active:scale-[0.98] transition-all disabled:opacity-50"
           >
             Let's go
           </button>

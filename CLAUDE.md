@@ -64,7 +64,7 @@ All Claude prompts live in `/src/lib/prompts.js` as builder functions. Never wri
 
 ## Voice Recording
 
-Uses MediaRecorder API with `audio/webm;codecs=opus`. The `useVoiceRecorder` hook handles all recording state. `VoiceRecorder.jsx` is the only component that renders recording UI — never duplicate this. Max recording length: 3 minutes (auto-stop). After stop: blob goes to Whisper → transcript returned as string.
+Uses MediaRecorder API with auto-detected MIME type (webm/mp4/aac/ogg — supports Safari/iOS). The `useVoiceRecorder` hook handles all recording state. `VoiceRecorder.jsx` is the only component that renders recording UI — never duplicate this. Max recording length: 3 minutes (auto-stop). After stop: blob goes to Whisper with correct file extension → transcript returned as string.
 
 ## Routing
 
@@ -109,18 +109,18 @@ Auth guard on all routes except `/onboarding`. If `onboarding_done = false`, red
 
 ## Current Status
 
-- [x] Supabase tables created
+- [x] Supabase schema + RLS policies (`supabase/setup.sql`)
 - [x] /src/lib/ files built
 - [x] /src/hooks/ files built
-- [x] VoiceRecorder.jsx complete and tested
-- [x] Onboarding.jsx complete
+- [x] VoiceRecorder.jsx complete (iOS/Android audio support, 3-min auto-stop)
+- [x] Onboarding.jsx complete (name collection added)
 - [x] Home.jsx complete
-- [x] Morning.jsx complete
+- [x] Morning.jsx complete (split rotation, offline cache)
 - [x] Evening.jsx complete
 - [x] Weekly.jsx complete
-- [x] PWA configured
-- [x] Routing complete
-- [ ] Polish pass done
+- [x] PWA configured (PNG icons, apple-touch-icon, viewport-fit)
+- [x] Routing complete (error boundary added)
+- [ ] Polish pass (handle already-logged-today, page transitions, Whisper retry UX)
 
 Update this checklist as steps are completed.
 

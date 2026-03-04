@@ -1,5 +1,3 @@
-const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY
-
 function getExtension(blob) {
   const mime = blob.type || ''
   if (mime.includes('mp4')) return 'mp4'
@@ -11,16 +9,20 @@ function getExtension(blob) {
 
 export async function transcribeAudio(blob) {
   const ext = getExtension(blob)
-  const formData = new FormData()
-  formData.append('file', blob, `recording.${ext}`)
-  formData.append('model', 'whisper-1')
+  const arrayBuffer = await blob.arrayBuffer()
+  const bytes = new Uint8Array(arrayBuffer)
+  let binary = ''
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i])
+  const base64 = btoa(binary)
 
-  const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+  const response = await fetch('/api/transcribe', {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${OPENAI_API_KEY}`,
-    },
-    body: formData,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      audio: base64,
+      mimeType: blob.type,
+      filename: `recording.${ext}`,
+    }),
   })
 
   if (!response.ok) {

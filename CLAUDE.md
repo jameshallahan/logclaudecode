@@ -23,13 +23,13 @@ Phase 1 — Personal proof of concept. Single authenticated user. No paywall. No
 ## Environment Variables
 
 ```
-VITE_SUPABASE_URL
-VITE_SUPABASE_ANON_KEY
-VITE_OPENAI_API_KEY
-VITE_ANTHROPIC_API_KEY
+VITE_SUPABASE_URL        (frontend)
+VITE_SUPABASE_ANON_KEY   (frontend)
+ANTHROPIC_API_KEY        (server-side only — Vercel env, no VITE_ prefix)
+OPENAI_API_KEY           (server-side only — Vercel env, no VITE_ prefix)
 ```
 
-Never hardcode these. Always use `import.meta.env.VITE_*`
+Supabase vars use `import.meta.env.VITE_*`. Claude and Whisper keys live only in Vercel environment variables and are accessed via `process.env` in `/api/*` routes — never exposed to the browser.
 
 ## Database Tables
 
@@ -125,7 +125,7 @@ Auth guard on all routes except `/onboarding`. If `onboarding_done = false`, red
 - [x] Polish pass: Whisper retry UX (retry button on transcription failure)
 - [x] Polish pass: Morning structured data cleanup (single `morning_response` field)
 - [x] Polish pass: Audio blob storage (Supabase Storage upload + migration SQL)
-- [ ] Move API keys server-side (Edge Function or Vercel API route)
+- [x] Move API keys server-side (Vercel API routes: /api/claude.js + /api/transcribe.js)
 - [ ] Capacitor setup (App Store distribution)
 
 Update this checklist as steps are completed.

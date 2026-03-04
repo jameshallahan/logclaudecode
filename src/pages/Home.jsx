@@ -39,7 +39,7 @@ export default function Home() {
   const nextAction = getNextAction()
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] flex flex-col px-6 pt-safe">
+    <div className="min-h-screen bg-[#0D0D0D] flex flex-col px-6 pt-safe animate-page-in">
       {/* Header */}
       <div className="flex items-center justify-between py-6">
         <div>

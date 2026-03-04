@@ -118,7 +118,7 @@ export default function Weekly() {
   const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] flex flex-col px-6 py-6">
+    <div className="min-h-screen bg-[#0D0D0D] flex flex-col px-6 py-6 animate-page-in">
       {/* Back */}
       <button
         onClick={() => navigate('/')}

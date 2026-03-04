@@ -138,7 +138,7 @@ export default function Evening() {
 
   if (checkingLog) {
     return (
-      <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center">
+      <div className="min-h-screen bg-bg flex items-center justify-center">
         <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
       </div>
     )
@@ -146,19 +146,22 @@ export default function Evening() {
 
   if (alreadyDone) {
     return (
-      <div className="min-h-screen bg-[#0D0D0D] flex flex-col items-center justify-center px-6 animate-page-in">
+      <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-5 pb-20 animate-page-in">
         <div className="w-full max-w-sm text-center">
-          <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-5 mb-6">
-            <p className="text-sm text-[#F0F0F0] leading-relaxed whitespace-pre-wrap">
+          <div className="bg-surface border border-border rounded-xl p-5 mb-6">
+            <p className="text-sm text-text leading-relaxed whitespace-pre-wrap">
               {existingSynthesis || "You've already logged this evening."}
             </p>
           </div>
           {streak > 0 && (
-            <p className="text-sm text-[#888888] mb-6">{streak} day streak</p>
+            <div className="mb-6">
+              <p className="text-xs text-text-muted mb-1">Current streak</p>
+              <p className="text-2xl font-semibold text-accent">{streak} day{streak !== 1 ? 's' : ''}</p>
+            </div>
           )}
           <button
             onClick={() => navigate('/')}
-            className="w-full h-12 bg-white text-[#0D0D0D] font-semibold rounded-xl hover:bg-[#E0E0E0] active:scale-[0.98] transition-all"
+            className="w-full h-14 bg-white text-bg font-semibold rounded-xl hover:bg-white/90 active:scale-[0.98] transition-all"
           >
             Back to home
           </button>
@@ -169,42 +172,51 @@ export default function Evening() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#0D0D0D] flex flex-col items-center justify-center px-6">
-        <p className="text-sm text-[#FF3B30] mb-4">{error}</p>
-        <button
-          onClick={() => { setError(null); setProcessing(false) }}
-          className="text-sm text-[#888888] hover:text-[#F0F0F0] mb-2"
-        >
-          Try again
-        </button>
-        <button
-          onClick={() => navigate('/')}
-          className="text-sm text-[#888888] hover:text-[#F0F0F0]"
-        >
-          Back to home
-        </button>
+      <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-5 pb-20">
+        <div className="w-full max-w-sm">
+          <div className="bg-surface border border-border rounded-xl p-5 text-center space-y-4">
+            <p className="text-sm text-error">{error}</p>
+            <button
+              onClick={() => { setError(null); setProcessing(false) }}
+              className="w-full h-14 bg-white text-bg font-semibold rounded-xl hover:bg-white/90 active:scale-[0.98] transition-all"
+            >
+              Try again
+            </button>
+            <button
+              onClick={() => navigate('/')}
+              className="w-full h-10 text-text-muted text-sm hover:text-text transition-colors"
+            >
+              Back to home
+            </button>
+          </div>
+        </div>
       </div>
     )
   }
 
-  // Done state — show synthesis
+  // Done state — show synthesis + streak
   if (done) {
     return (
-      <div className="min-h-screen bg-[#0D0D0D] flex flex-col items-center justify-center px-6 animate-page-in">
+      <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-5 pb-20 animate-page-in">
         <div className="w-full max-w-sm text-center">
-          <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-5 mb-6">
-            <p className="text-sm text-[#F0F0F0] leading-relaxed whitespace-pre-wrap">{synthesis}</p>
+          <svg className="w-10 h-10 text-success mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+
+          <div className="bg-surface border border-border rounded-xl p-5 mb-6">
+            <p className="text-sm text-text leading-relaxed whitespace-pre-wrap">{synthesis}</p>
           </div>
 
           {(streak + 1) > 0 && (
-            <p className="text-sm text-[#888888] mb-6">
-              {streak + 1} day streak
-            </p>
+            <div className="mb-6">
+              <p className="text-xs text-text-muted mb-1">Current streak</p>
+              <p className="text-2xl font-semibold text-accent">{streak + 1} day{(streak + 1) !== 1 ? 's' : ''}</p>
+            </div>
           )}
 
           <button
             onClick={() => navigate('/')}
-            className="w-full h-12 bg-white text-[#0D0D0D] font-semibold rounded-xl hover:bg-[#E0E0E0] active:scale-[0.98] transition-all"
+            className="w-full h-14 bg-white text-bg font-semibold rounded-xl hover:bg-white/90 active:scale-[0.98] transition-all"
           >
             Done
           </button>
@@ -216,9 +228,9 @@ export default function Evening() {
   // Processing state
   if (processing) {
     return (
-      <div className="min-h-screen bg-[#0D0D0D] flex flex-col items-center justify-center px-6">
+      <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-5 pb-20">
         <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="text-sm text-[#888888]">Processing your log...</p>
+        <p className="text-sm text-text-muted">Processing your log...</p>
       </div>
     )
   }
@@ -227,49 +239,39 @@ export default function Evening() {
   const hasCurrentTranscript = transcripts.length > promptIndex
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] flex flex-col animate-page-in">
-      {/* Progress bar */}
-      <div className="h-1 bg-[#1A1A1A]">
+    <div className="min-h-screen bg-bg flex flex-col pb-20 animate-page-in">
+      {/* Progress bar — accent color */}
+      <div className="h-1 bg-surface">
         <div
-          className="h-full bg-white transition-all duration-300"
+          className="h-full bg-accent transition-all duration-300"
           style={{ width: `${((promptIndex + (hasCurrentTranscript ? 1 : 0)) / EVENING_PROMPTS.length) * 100}%` }}
         />
       </div>
 
-      {/* Back button */}
-      <div className="px-6 pt-4">
-        <button
-          onClick={() => navigate('/')}
-          className="text-sm text-[#888888] hover:text-[#F0F0F0]"
-        >
-          ← Back
-        </button>
-      </div>
-
-      <div className="flex-1 flex flex-col items-center justify-center px-6">
+      <div className="flex-1 flex flex-col items-center justify-center px-5">
         <div key={promptIndex} className="w-full max-w-sm animate-page-in">
-          <p className="text-xs text-[#888888] mb-4 text-center">
+          <p className="text-xs text-text-muted mb-4 text-center">
             {promptIndex + 1} of {EVENING_PROMPTS.length}
           </p>
 
-          <h2 className="text-lg font-semibold text-[#F0F0F0] text-center mb-8 leading-relaxed">
+          <h2 className="text-lg font-semibold text-text text-center mb-8 leading-relaxed">
             {EVENING_PROMPTS[promptIndex]}
           </h2>
 
           {hasCurrentTranscript ? (
             <div className="space-y-4">
-              <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-4">
-                <p className="text-sm text-[#F0F0F0] leading-relaxed">{transcripts[promptIndex]}</p>
+              <div className="bg-surface border border-border rounded-xl p-4">
+                <p className="text-sm text-text leading-relaxed">{transcripts[promptIndex]}</p>
               </div>
               <button
                 onClick={handleNext}
-                className="w-full h-12 bg-white text-[#0D0D0D] font-semibold rounded-xl hover:bg-[#E0E0E0] active:scale-[0.98] transition-all"
+                className="w-full h-14 bg-white text-bg font-semibold rounded-xl hover:bg-white/90 active:scale-[0.98] transition-all"
               >
                 {promptIndex < EVENING_PROMPTS.length - 1 ? 'Next' : 'Finish log'}
               </button>
               <button
                 onClick={() => { setTranscripts((prev) => prev.slice(0, -1)); setBlobs((prev) => prev.slice(0, -1)) }}
-                className="w-full h-10 text-[#888888] text-sm hover:text-[#F0F0F0] transition-colors"
+                className="w-full h-10 text-text-muted text-sm hover:text-text transition-colors"
               >
                 Re-record
               </button>

@@ -1,14 +1,17 @@
 import { useNavigate } from 'react-router-dom'
 import { useUserProfile } from '../hooks/useUserProfile'
 import { useTodayLog } from '../hooks/useTodayLog'
+import { useWeekLogs } from '../hooks/useWeekLogs'
 import { supabase } from '../lib/supabase'
+import WeekDots from '../components/WeekDots'
 
 export default function Home() {
   const navigate = useNavigate()
   const { profile, loading: profileLoading } = useUserProfile()
   const { morningDone, eveningDone, streak, loading: logLoading } = useTodayLog()
+  const { days, todayIndex, loading: weekLoading } = useWeekLogs()
 
-  const loading = profileLoading || logLoading
+  const loading = profileLoading || logLoading || weekLoading
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -17,7 +20,7 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0D0D0D] flex items-center justify-center">
+      <div className="min-h-screen bg-bg flex items-center justify-center">
         <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
       </div>
     )
@@ -37,83 +40,88 @@ export default function Home() {
   }
 
   const nextAction = getNextAction()
+  const tasksComplete = morningDone && eveningDone
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] flex flex-col px-6 pt-safe animate-page-in">
+    <div className="min-h-screen bg-bg flex flex-col px-5 pt-safe pb-20 animate-page-in">
       {/* Header */}
       <div className="flex items-center justify-between py-6">
         <div>
-          <p className="text-xs text-[#888888]">
+          <p className="text-xs text-text-muted">
             {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
           </p>
-          <h1 className="text-xl font-semibold text-[#F0F0F0] mt-1">
+          <h1 className="text-xl font-semibold text-text mt-1">
             {greeting()}{profile?.name ? `, ${profile.name}` : ''}
           </h1>
         </div>
         <button
           onClick={handleSignOut}
-          className="text-xs text-[#888888] hover:text-[#F0F0F0] transition-colors"
+          className="text-xs text-text-muted hover:text-text transition-colors"
         >
           Sign out
         </button>
       </div>
 
-      {/* Status cards */}
-      <div className="space-y-3 flex-1">
-        {/* Streak */}
-        {streak > 0 && (
-          <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-4 flex items-center justify-between">
-            <span className="text-sm text-[#888888]">Current streak</span>
-            <span className="text-lg font-semibold text-[#F0F0F0]">{streak} day{streak !== 1 ? 's' : ''}</span>
-          </div>
-        )}
-
-        {/* Today's progress */}
-        <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-4 space-y-3">
-          <h3 className="text-xs font-semibold text-[#888888] uppercase tracking-wider">Today</h3>
-
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-[#F0F0F0]">Morning check-in</span>
-            <span className={`text-xs font-semibold ${morningDone ? 'text-green-400' : 'text-[#888888]'}`}>
-              {morningDone ? 'Done' : 'Pending'}
-            </span>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-[#F0F0F0]">Evening log</span>
-            <span className={`text-xs font-semibold ${eveningDone ? 'text-green-400' : 'text-[#888888]'}`}>
-              {eveningDone ? 'Done' : 'Pending'}
-            </span>
-          </div>
+      {/* Week dots + streak */}
+      <div className="bg-surface border border-border rounded-xl p-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider">This week</h3>
+          {streak > 0 && (
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl font-semibold text-accent">{streak}</span>
+              <span className="text-xs text-text-muted">day streak</span>
+            </div>
+          )}
         </div>
+        <WeekDots days={days} todayIndex={todayIndex} />
+      </div>
 
-        {/* Main CTA */}
-        {nextAction && (
-          <button
-            onClick={() => navigate(nextAction.path)}
-            className="w-full h-14 bg-white text-[#0D0D0D] font-semibold rounded-xl hover:bg-[#E0E0E0] active:scale-[0.98] transition-all"
-          >
-            {nextAction.label}
-          </button>
-        )}
+      <div className="h-6" />
 
-        {!nextAction && (
-          <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-5 text-center">
-            <p className="text-sm text-[#888888]">You're done for today. Rest up.</p>
-          </div>
-        )}
-
-        {/* Weekly link */}
+      {/* Today's status — 2-column stat grid */}
+      <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-3">Today</h3>
+      <div className="grid grid-cols-2 gap-3">
         <button
-          onClick={() => navigate('/weekly')}
-          className="w-full h-12 border border-[#2A2A2A] text-[#F0F0F0] font-semibold rounded-xl hover:bg-[#1A1A1A] active:scale-[0.98] transition-all"
+          onClick={() => navigate('/morning')}
+          className="bg-surface border border-border rounded-xl p-4 text-left active:scale-[0.98] transition-all"
         >
-          View weekly program
+          <p className="text-xs text-text-muted mb-1">Morning</p>
+          <p className={`text-lg font-semibold ${morningDone ? 'text-success' : 'text-text'}`}>
+            {morningDone ? 'Done' : 'Pending'}
+          </p>
+        </button>
+
+        <button
+          onClick={() => navigate('/evening')}
+          className="bg-surface border border-border rounded-xl p-4 text-left active:scale-[0.98] transition-all"
+        >
+          <p className="text-xs text-text-muted mb-1">Evening</p>
+          <p className={`text-lg font-semibold ${eveningDone ? 'text-success' : 'text-text'}`}>
+            {eveningDone ? 'Done' : 'Pending'}
+          </p>
         </button>
       </div>
 
-      {/* Footer spacing */}
-      <div className="h-8" />
+      <div className="h-6" />
+
+      {/* Primary CTA */}
+      {nextAction && (
+        <button
+          onClick={() => navigate(nextAction.path)}
+          className="w-full h-14 bg-white text-bg font-semibold rounded-xl hover:bg-white/90 active:scale-[0.98] transition-all"
+        >
+          {nextAction.label}
+        </button>
+      )}
+
+      {tasksComplete && (
+        <div className="bg-surface border border-border rounded-xl p-5 text-center">
+          <svg className="w-8 h-8 text-success mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+          <p className="text-sm text-text-muted">You're done for today. Rest up.</p>
+        </div>
+      )}
     </div>
   )
 }

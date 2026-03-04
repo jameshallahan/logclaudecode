@@ -70,10 +70,10 @@ export default function VoiceRecorder({ onTranscript, disabled = false }) {
         <div
           className={`w-20 h-20 rounded-full flex items-center justify-center transition-all duration-200 ${
             isRecording
-              ? 'bg-[#FF3B30] scale-110'
+              ? 'bg-record scale-110'
               : transcribing
-                ? 'bg-[#2A2A2A]'
-                : 'bg-[#2A2A2A] hover:bg-[#333333] active:scale-95'
+                ? 'bg-border'
+                : 'bg-border hover:bg-surface-hover active:scale-95'
           } ${disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}`}
         >
           {isRecording ? (
@@ -97,26 +97,26 @@ export default function VoiceRecorder({ onTranscript, disabled = false }) {
           )}
         </div>
         {isRecording && (
-          <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-[#FF3B30] animate-pulse" />
+          <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-record animate-pulse" />
         )}
       </button>
 
       {isRecording && (
-        <p className="text-sm text-[#888888] tabular-nums">{formatTime(elapsed)}</p>
+        <p className="text-sm text-text-muted tabular-nums">{formatTime(elapsed)}</p>
       )}
 
       {transcribing && (
-        <p className="text-sm text-[#888888]">Transcribing...</p>
+        <p className="text-sm text-text-muted">Transcribing...</p>
       )}
 
       {(error || transcribeError) && (
         <div className="flex flex-col items-center gap-2">
-          <p className="text-sm text-[#FF3B30]">{error || transcribeError}</p>
+          <p className="text-sm text-error">{error || transcribeError}</p>
           {transcribeError && (
             <button
               onClick={handleRetry}
               disabled={transcribing}
-              className="text-sm text-[#888888] hover:text-[#F0F0F0] transition-colors"
+              className="text-sm text-text-muted hover:text-text transition-colors"
             >
               Retry transcription
             </button>

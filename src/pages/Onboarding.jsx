@@ -21,12 +21,34 @@ export default function Onboarding() {
   const navigate = useNavigate()
   const [step, setStep] = useState('welcome') // welcome | questions | review | saving
   const [name, setName] = useState('')
+  const [age, setAge] = useState('')
+  const [units, setUnits] = useState('metric') // metric | imperial
+  const [height, setHeight] = useState('') // cm if metric
+  const [heightFt, setHeightFt] = useState('')
+  const [heightIn, setHeightIn] = useState('')
+  const [weight, setWeight] = useState('') // kg if metric, lbs if imperial
   const [questionIndex, setQuestionIndex] = useState(0)
   const [transcripts, setTranscripts] = useState({})
   const [profileSummary, setProfileSummary] = useState('')
   const [error, setError] = useState(null)
   const [generating, setGenerating] = useState(false)
   const [correctionMode, setCorrectionMode] = useState(false)
+
+  // Convert to metric for storage
+  const getHeightCm = () => {
+    if (units === 'metric') return parseFloat(height) || null
+    const ft = parseFloat(heightFt) || 0
+    const inches = parseFloat(heightIn) || 0
+    return ft || inches ? Math.round((ft * 30.48) + (inches * 2.54)) : null
+  }
+
+  const getWeightKg = () => {
+    const w = parseFloat(weight) || null
+    if (!w) return null
+    return units === 'metric' ? w : Math.round(w * 0.453592 * 10) / 10
+  }
+
+  const welcomeValid = name.trim() && age && weight && (units === 'metric' ? height : (heightFt || heightIn))
 
   const handleTranscript = useCallback((text) => {
     const key = QUESTION_KEYS[questionIndex]
@@ -85,6 +107,10 @@ export default function Onboarding() {
         .upsert({
           id: user.id,
           name: name.trim(),
+          age: parseInt(age) || null,
+          height_cm: getHeightCm(),
+          weight_kg: getWeightKg(),
+          unit_preference: units,
           goals: transcripts.goals || '',
           training_split: transcripts.training || '',
           baseline: transcripts.baseline || '',
@@ -107,22 +133,97 @@ export default function Onboarding() {
   if (step === 'welcome') {
     return (
       <div className="min-h-screen bg-[#0D0D0D] flex flex-col items-center justify-center px-6 animate-page-in">
-        <div className="w-full max-w-sm text-center">
-          <h1 className="text-2xl font-semibold text-[#F0F0F0] mb-4">Welcome to The Log</h1>
-          <p className="text-sm text-[#888888] leading-relaxed mb-6">
-            I'm going to ask you 7 quick questions to understand who you are, how you train, and what you're working towards. Just talk — no typing needed.
+        <div className="w-full max-w-sm">
+          <h1 className="text-2xl font-semibold text-[#F0F0F0] text-center mb-2">Welcome to The Log</h1>
+          <p className="text-sm text-[#888888] text-center leading-relaxed mb-6">
+            A few quick details, then 7 voice questions to build your coaching profile.
           </p>
-          <input
-            type="text"
-            placeholder="Your first name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full h-12 bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl px-4 text-sm text-[#F0F0F0] placeholder-[#888888] outline-none focus:border-[#888888] transition-colors mb-4 text-center"
-          />
+
+          <div className="space-y-3">
+            <input
+              type="text"
+              placeholder="First name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full h-12 bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl px-4 text-sm text-[#F0F0F0] placeholder-[#888888] outline-none focus:border-[#888888] transition-colors text-center"
+            />
+
+            <input
+              type="number"
+              placeholder="Age"
+              value={age}
+              onChange={(e) => setAge(e.target.value)}
+              min="13"
+              max="120"
+              className="w-full h-12 bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl px-4 text-sm text-[#F0F0F0] placeholder-[#888888] outline-none focus:border-[#888888] transition-colors text-center"
+            />
+
+            {/* Unit toggle */}
+            <div className="flex rounded-xl overflow-hidden border border-[#2A2A2A]">
+              <button
+                onClick={() => setUnits('metric')}
+                className={`flex-1 h-10 text-sm font-semibold transition-colors ${units === 'metric' ? 'bg-white text-[#0D0D0D]' : 'bg-[#1A1A1A] text-[#888888]'}`}
+              >
+                Metric
+              </button>
+              <button
+                onClick={() => setUnits('imperial')}
+                className={`flex-1 h-10 text-sm font-semibold transition-colors ${units === 'imperial' ? 'bg-white text-[#0D0D0D]' : 'bg-[#1A1A1A] text-[#888888]'}`}
+              >
+                Imperial
+              </button>
+            </div>
+
+            {/* Height */}
+            {units === 'metric' ? (
+              <input
+                type="number"
+                placeholder="Height (cm)"
+                value={height}
+                onChange={(e) => setHeight(e.target.value)}
+                min="100"
+                max="250"
+                className="w-full h-12 bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl px-4 text-sm text-[#F0F0F0] placeholder-[#888888] outline-none focus:border-[#888888] transition-colors text-center"
+              />
+            ) : (
+              <div className="flex gap-3">
+                <input
+                  type="number"
+                  placeholder="Feet"
+                  value={heightFt}
+                  onChange={(e) => setHeightFt(e.target.value)}
+                  min="3"
+                  max="8"
+                  className="flex-1 h-12 bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl px-4 text-sm text-[#F0F0F0] placeholder-[#888888] outline-none focus:border-[#888888] transition-colors text-center"
+                />
+                <input
+                  type="number"
+                  placeholder="Inches"
+                  value={heightIn}
+                  onChange={(e) => setHeightIn(e.target.value)}
+                  min="0"
+                  max="11"
+                  className="flex-1 h-12 bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl px-4 text-sm text-[#F0F0F0] placeholder-[#888888] outline-none focus:border-[#888888] transition-colors text-center"
+                />
+              </div>
+            )}
+
+            {/* Weight */}
+            <input
+              type="number"
+              placeholder={units === 'metric' ? 'Weight (kg)' : 'Weight (lbs)'}
+              value={weight}
+              onChange={(e) => setWeight(e.target.value)}
+              min="30"
+              max="500"
+              className="w-full h-12 bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl px-4 text-sm text-[#F0F0F0] placeholder-[#888888] outline-none focus:border-[#888888] transition-colors text-center"
+            />
+          </div>
+
           <button
             onClick={() => setStep('questions')}
-            disabled={!name.trim()}
-            className="w-full h-12 bg-white text-[#0D0D0D] font-semibold rounded-xl hover:bg-[#E0E0E0] active:scale-[0.98] transition-all disabled:opacity-50"
+            disabled={!welcomeValid}
+            className="w-full h-12 mt-6 bg-white text-[#0D0D0D] font-semibold rounded-xl hover:bg-[#E0E0E0] active:scale-[0.98] transition-all disabled:opacity-50"
           >
             Let's go
           </button>

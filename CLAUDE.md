@@ -113,7 +113,7 @@ Auth guard on all routes except `/onboarding`. If `onboarding_done = false`, red
 - [x] /src/lib/ files built
 - [x] /src/hooks/ files built
 - [x] VoiceRecorder.jsx complete (iOS/Android audio support, 3-min auto-stop)
-- [x] Onboarding.jsx complete (name collection added)
+- [x] Onboarding.jsx complete (name, age, height, weight + unit toggle, email verification)
 - [x] Home.jsx complete
 - [x] Morning.jsx complete (split rotation, offline cache)
 - [x] Evening.jsx complete

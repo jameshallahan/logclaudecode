@@ -118,16 +118,16 @@ export default function Weekly() {
   const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] flex flex-col px-6 py-6 animate-page-in">
+    <div className="min-h-screen bg-bg flex flex-col px-5 py-6 pb-20 animate-page-in">
       {/* Back */}
       <button
         onClick={() => navigate('/')}
-        className="text-sm text-[#888888] hover:text-[#F0F0F0] self-start mb-6"
+        className="text-sm text-text-muted hover:text-text self-start mb-6"
       >
         ← Back
       </button>
 
-      <h1 className="text-lg font-semibold text-[#F0F0F0] mb-6">Weekly Program</h1>
+      <h1 className="text-lg font-semibold text-text mb-6">Weekly Program</h1>
 
       {loading ? (
         <div className="flex items-center justify-center py-12">
@@ -135,11 +135,11 @@ export default function Weekly() {
         </div>
       ) : !program ? (
         <div className="text-center py-12">
-          <p className="text-sm text-[#888888] mb-6">No program generated for this week yet.</p>
+          <p className="text-sm text-text-muted mb-6">No program generated for this week yet.</p>
           <button
             onClick={generateProgram}
             disabled={generating}
-            className="w-full h-12 bg-white text-[#0D0D0D] font-semibold rounded-xl hover:bg-[#E0E0E0] active:scale-[0.98] transition-all disabled:opacity-50"
+            className="w-full h-12 bg-white text-bg font-semibold rounded-xl hover:bg-[#E0E0E0] active:scale-[0.98] transition-all disabled:opacity-50"
           >
             {generating ? 'Generating...' : 'Generate this week\'s program'}
           </button>
@@ -156,10 +156,10 @@ export default function Weekly() {
 
             if (dayPlan.type === 'rest') {
               return (
-                <div key={day} className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-4">
+                <div key={day} className="bg-surface border border-border rounded-xl p-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold text-[#F0F0F0]">{day}</span>
-                    <span className="text-xs text-[#888888]">Rest</span>
+                    <span className="text-sm font-semibold text-text">{day}</span>
+                    <span className="text-xs text-text-muted">Rest</span>
                   </div>
                 </div>
               )
@@ -167,10 +167,10 @@ export default function Weekly() {
 
             if (dayPlan.type === 'active_recovery') {
               return (
-                <div key={day} className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-4">
+                <div key={day} className="bg-surface border border-border rounded-xl p-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold text-[#F0F0F0]">{day}</span>
-                    <span className="text-xs text-[#888888]">Active Recovery</span>
+                    <span className="text-sm font-semibold text-text">{day}</span>
+                    <span className="text-xs text-text-muted">Active Recovery</span>
                   </div>
                 </div>
               )
@@ -178,7 +178,7 @@ export default function Weekly() {
 
             return (
               <div key={day}>
-                <p className="text-xs text-[#888888] mb-2 ml-1">{day}</p>
+                <p className="text-xs text-text-muted mb-2 ml-1">{day}</p>
                 <WorkoutCard workout={dayPlan.workout} />
               </div>
             )
@@ -188,7 +188,7 @@ export default function Weekly() {
           <button
             onClick={generateProgram}
             disabled={generating}
-            className="w-full h-10 text-[#888888] text-sm hover:text-[#F0F0F0] transition-colors disabled:opacity-50"
+            className="w-full h-10 text-text-muted text-sm hover:text-text transition-colors disabled:opacity-50"
           >
             {generating ? 'Regenerating...' : 'Regenerate program'}
           </button>
@@ -196,7 +196,7 @@ export default function Weekly() {
       )}
 
       {error && (
-        <p className="text-sm text-[#FF3B30] text-center mt-4">{error}</p>
+        <p className="text-sm text-error text-center mt-4">{error}</p>
       )}
     </div>
   )

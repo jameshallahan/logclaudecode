@@ -132,10 +132,10 @@ export default function Onboarding() {
   // Welcome screen
   if (step === 'welcome') {
     return (
-      <div className="min-h-screen bg-[#0D0D0D] flex flex-col items-center justify-center px-6 animate-page-in">
+      <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-6 animate-page-in">
         <div className="w-full max-w-sm">
-          <h1 className="text-2xl font-semibold text-[#F0F0F0] text-center mb-2">Welcome to The Log</h1>
-          <p className="text-sm text-[#888888] text-center leading-relaxed mb-6">
+          <h1 className="text-2xl font-semibold text-text text-center mb-2">Welcome to The Log</h1>
+          <p className="text-sm text-text-muted text-center leading-relaxed mb-6">
             A few quick details, then 7 voice questions to build your coaching profile.
           </p>
 
@@ -145,7 +145,7 @@ export default function Onboarding() {
               placeholder="First name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full h-12 bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl px-4 text-sm text-[#F0F0F0] placeholder-[#888888] outline-none focus:border-[#888888] transition-colors text-center"
+              className="w-full h-12 bg-surface border border-border rounded-xl px-4 text-sm text-text placeholder-text-muted outline-none focus:border-text-muted transition-colors text-center"
             />
 
             <input
@@ -155,20 +155,20 @@ export default function Onboarding() {
               onChange={(e) => setAge(e.target.value)}
               min="13"
               max="120"
-              className="w-full h-12 bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl px-4 text-sm text-[#F0F0F0] placeholder-[#888888] outline-none focus:border-[#888888] transition-colors text-center"
+              className="w-full h-12 bg-surface border border-border rounded-xl px-4 text-sm text-text placeholder-text-muted outline-none focus:border-text-muted transition-colors text-center"
             />
 
             {/* Unit toggle */}
-            <div className="flex rounded-xl overflow-hidden border border-[#2A2A2A]">
+            <div className="flex rounded-xl overflow-hidden border border-border">
               <button
                 onClick={() => setUnits('metric')}
-                className={`flex-1 h-10 text-sm font-semibold transition-colors ${units === 'metric' ? 'bg-white text-[#0D0D0D]' : 'bg-[#1A1A1A] text-[#888888]'}`}
+                className={`flex-1 h-10 text-sm font-semibold transition-colors ${units === 'metric' ? 'bg-white text-bg' : 'bg-surface text-text-muted'}`}
               >
                 Metric
               </button>
               <button
                 onClick={() => setUnits('imperial')}
-                className={`flex-1 h-10 text-sm font-semibold transition-colors ${units === 'imperial' ? 'bg-white text-[#0D0D0D]' : 'bg-[#1A1A1A] text-[#888888]'}`}
+                className={`flex-1 h-10 text-sm font-semibold transition-colors ${units === 'imperial' ? 'bg-white text-bg' : 'bg-surface text-text-muted'}`}
               >
                 Imperial
               </button>
@@ -183,7 +183,7 @@ export default function Onboarding() {
                 onChange={(e) => setHeight(e.target.value)}
                 min="100"
                 max="250"
-                className="w-full h-12 bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl px-4 text-sm text-[#F0F0F0] placeholder-[#888888] outline-none focus:border-[#888888] transition-colors text-center"
+                className="w-full h-12 bg-surface border border-border rounded-xl px-4 text-sm text-text placeholder-text-muted outline-none focus:border-text-muted transition-colors text-center"
               />
             ) : (
               <div className="flex gap-3">
@@ -194,7 +194,7 @@ export default function Onboarding() {
                   onChange={(e) => setHeightFt(e.target.value)}
                   min="3"
                   max="8"
-                  className="flex-1 h-12 bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl px-4 text-sm text-[#F0F0F0] placeholder-[#888888] outline-none focus:border-[#888888] transition-colors text-center"
+                  className="flex-1 h-12 bg-surface border border-border rounded-xl px-4 text-sm text-text placeholder-text-muted outline-none focus:border-text-muted transition-colors text-center"
                 />
                 <input
                   type="number"
@@ -203,7 +203,7 @@ export default function Onboarding() {
                   onChange={(e) => setHeightIn(e.target.value)}
                   min="0"
                   max="11"
-                  className="flex-1 h-12 bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl px-4 text-sm text-[#F0F0F0] placeholder-[#888888] outline-none focus:border-[#888888] transition-colors text-center"
+                  className="flex-1 h-12 bg-surface border border-border rounded-xl px-4 text-sm text-text placeholder-text-muted outline-none focus:border-text-muted transition-colors text-center"
                 />
               </div>
             )}
@@ -216,14 +216,14 @@ export default function Onboarding() {
               onChange={(e) => setWeight(e.target.value)}
               min="30"
               max="500"
-              className="w-full h-12 bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl px-4 text-sm text-[#F0F0F0] placeholder-[#888888] outline-none focus:border-[#888888] transition-colors text-center"
+              className="w-full h-12 bg-surface border border-border rounded-xl px-4 text-sm text-text placeholder-text-muted outline-none focus:border-text-muted transition-colors text-center"
             />
           </div>
 
           <button
             onClick={() => setStep('questions')}
             disabled={!welcomeValid}
-            className="w-full h-12 mt-6 bg-white text-[#0D0D0D] font-semibold rounded-xl hover:bg-[#E0E0E0] active:scale-[0.98] transition-all disabled:opacity-50"
+            className="w-full h-12 mt-6 bg-white text-bg font-semibold rounded-xl hover:bg-[#E0E0E0] active:scale-[0.98] transition-all disabled:opacity-50"
           >
             Let's go
           </button>
@@ -238,9 +238,9 @@ export default function Onboarding() {
     const hasTranscript = !!transcripts[currentKey]
 
     return (
-      <div className="min-h-screen bg-[#0D0D0D] flex flex-col animate-page-in">
+      <div className="min-h-screen bg-bg flex flex-col animate-page-in">
         {/* Progress bar */}
-        <div className="h-1 bg-[#1A1A1A]">
+        <div className="h-1 bg-surface">
           <div
             className="h-full bg-white transition-all duration-300"
             style={{ width: `${((questionIndex + (hasTranscript ? 1 : 0)) / QUESTIONS.length) * 100}%` }}
@@ -249,22 +249,22 @@ export default function Onboarding() {
 
         <div className="flex-1 flex flex-col items-center justify-center px-6">
           <div key={questionIndex} className="w-full max-w-sm animate-page-in">
-            <p className="text-xs text-[#888888] mb-4 text-center">
+            <p className="text-xs text-text-muted mb-4 text-center">
               {questionIndex + 1} of {QUESTIONS.length}
             </p>
 
-            <h2 className="text-lg font-semibold text-[#F0F0F0] text-center mb-8 leading-relaxed">
+            <h2 className="text-lg font-semibold text-text text-center mb-8 leading-relaxed">
               {QUESTIONS[questionIndex]}
             </h2>
 
             {hasTranscript ? (
               <div className="space-y-4">
-                <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-4">
-                  <p className="text-sm text-[#F0F0F0] leading-relaxed">{transcripts[currentKey]}</p>
+                <div className="bg-surface border border-border rounded-xl p-4">
+                  <p className="text-sm text-text leading-relaxed">{transcripts[currentKey]}</p>
                 </div>
                 <button
                   onClick={handleNext}
-                  className="w-full h-12 bg-white text-[#0D0D0D] font-semibold rounded-xl hover:bg-[#E0E0E0] active:scale-[0.98] transition-all"
+                  className="w-full h-12 bg-white text-bg font-semibold rounded-xl hover:bg-[#E0E0E0] active:scale-[0.98] transition-all"
                 >
                   {questionIndex < QUESTIONS.length - 1 ? 'Next' : 'Build my profile'}
                 </button>
@@ -274,7 +274,7 @@ export default function Onboarding() {
                     delete next[currentKey]
                     return next
                   })}
-                  className="w-full h-10 text-[#888888] text-sm hover:text-[#F0F0F0] transition-colors"
+                  className="w-full h-10 text-text-muted text-sm hover:text-text transition-colors"
                 >
                   Re-record
                 </button>
@@ -290,31 +290,31 @@ export default function Onboarding() {
 
   // Review + saving
   return (
-    <div className="min-h-screen bg-[#0D0D0D] flex flex-col items-center justify-center px-6 animate-page-in">
+    <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-6 animate-page-in">
       <div className="w-full max-w-sm">
-        <h2 className="text-lg font-semibold text-[#F0F0F0] text-center mb-6">
+        <h2 className="text-lg font-semibold text-text text-center mb-6">
           {step === 'saving' ? 'Setting up your profile...' : 'Your coaching profile'}
         </h2>
 
         {generating ? (
-          <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-5 animate-pulse">
+          <div className="bg-surface border border-border rounded-xl p-5 animate-pulse">
             <div className="space-y-2">
-              <div className="h-3 bg-[#2A2A2A] rounded w-full" />
-              <div className="h-3 bg-[#2A2A2A] rounded w-5/6" />
-              <div className="h-3 bg-[#2A2A2A] rounded w-4/6" />
-              <div className="h-3 bg-[#2A2A2A] rounded w-full" />
-              <div className="h-3 bg-[#2A2A2A] rounded w-3/4" />
+              <div className="h-3 bg-border rounded w-full" />
+              <div className="h-3 bg-border rounded w-5/6" />
+              <div className="h-3 bg-border rounded w-4/6" />
+              <div className="h-3 bg-border rounded w-full" />
+              <div className="h-3 bg-border rounded w-3/4" />
             </div>
           </div>
         ) : (
           <>
-            <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-5 mb-6">
-              <p className="text-sm text-[#F0F0F0] leading-relaxed whitespace-pre-wrap">{profileSummary}</p>
+            <div className="bg-surface border border-border rounded-xl p-5 mb-6">
+              <p className="text-sm text-text leading-relaxed whitespace-pre-wrap">{profileSummary}</p>
             </div>
 
             {correctionMode ? (
               <div className="mb-4">
-                <p className="text-xs text-[#888888] text-center mb-4">Tell me what needs changing</p>
+                <p className="text-xs text-text-muted text-center mb-4">Tell me what needs changing</p>
                 <VoiceRecorder onTranscript={handleCorrectionTranscript} />
               </div>
             ) : (
@@ -322,14 +322,14 @@ export default function Onboarding() {
                 <button
                   onClick={handleConfirm}
                   disabled={step === 'saving'}
-                  className="w-full h-12 bg-white text-[#0D0D0D] font-semibold rounded-xl hover:bg-[#E0E0E0] active:scale-[0.98] transition-all disabled:opacity-50"
+                  className="w-full h-12 bg-white text-bg font-semibold rounded-xl hover:bg-[#E0E0E0] active:scale-[0.98] transition-all disabled:opacity-50"
                 >
                   {step === 'saving' ? 'Saving...' : "Looks right \u2014 let\u2019s go"}
                 </button>
                 <button
                   onClick={() => setCorrectionMode(true)}
                   disabled={step === 'saving'}
-                  className="w-full h-10 text-[#888888] text-sm hover:text-[#F0F0F0] transition-colors"
+                  className="w-full h-10 text-text-muted text-sm hover:text-text transition-colors"
                 >
                   Something needs adjusting
                 </button>
@@ -339,7 +339,7 @@ export default function Onboarding() {
         )}
 
         {error && (
-          <p className="text-sm text-[#FF3B30] text-center mt-4">{error}</p>
+          <p className="text-sm text-error text-center mt-4">{error}</p>
         )}
       </div>
     </div>

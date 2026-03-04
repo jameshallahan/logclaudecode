@@ -1,5 +1,38 @@
 @import "tailwindcss";
 
+/* Design tokens */
+:root {
+  --bg: #0D0D0D;
+  --surface: #1A1A1A;
+  --surface-hover: #222222;
+  --border: #2A2A2A;
+  --text: #F0F0F0;
+  --text-muted: #888888;
+  --text-dim: #555555;
+  --accent: #D97706;
+  --accent-light: #F59E0B;
+  --accent-dim: #92400E;
+  --record: #FF3B30;
+  --success: #22C55E;
+  --error: #FF3B30;
+}
+
+@theme {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-border: var(--border);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-text-dim: var(--text-dim);
+  --color-accent: var(--accent);
+  --color-accent-light: var(--accent-light);
+  --color-accent-dim: var(--accent-dim);
+  --color-record: var(--record);
+  --color-success: var(--success);
+  --color-error: var(--error);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -14,11 +47,12 @@ html {
 }
 
 body {
-  background-color: #0D0D0D;
-  color: #F0F0F0;
+  background-color: var(--bg);
+  color: var(--text);
   min-height: 100vh;
   min-height: 100dvh;
   overflow-x: hidden;
+  overscroll-behavior-y: contain;
 }
 
 /* Safe area padding for PWA */
@@ -36,17 +70,12 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0D0D0D;
+  background: var(--bg);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2A2A2A;
+  background: var(--border);
   border-radius: 2px;
-}
-
-/* Prevent pull-to-refresh on mobile */
-body {
-  overscroll-behavior-y: contain;
 }
 
 /* Page transitions */

@@ -241,11 +241,11 @@ export default function Morning() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#0D0D0D] flex flex-col items-center justify-center px-6">
-        <p className="text-sm text-[#FF3B30] mb-4">{error}</p>
+      <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-6">
+        <p className="text-sm text-error mb-4">{error}</p>
         <button
           onClick={() => navigate('/')}
-          className="text-sm text-[#888888] hover:text-[#F0F0F0]"
+          className="text-sm text-text-muted hover:text-text"
         >
           Back to home
         </button>
@@ -255,25 +255,25 @@ export default function Morning() {
 
   if (alreadyDone) {
     return (
-      <div className="min-h-screen bg-[#0D0D0D] flex flex-col px-6 py-6 animate-page-in">
+      <div className="min-h-screen bg-bg flex flex-col px-5 py-6 pb-20 animate-page-in">
         <button
           onClick={() => navigate('/')}
-          className="text-sm text-[#888888] hover:text-[#F0F0F0] self-start mb-6"
+          className="text-sm text-text-muted hover:text-text self-start mb-6"
         >
           ← Back
         </button>
-        <h1 className="text-lg font-semibold text-[#F0F0F0] mb-6">Morning check-in</h1>
+        <h1 className="text-lg font-semibold text-text mb-6">Morning check-in</h1>
         <div className="space-y-4">
           {morningText && <PromptCard title="Coach's note" text={morningText} loading={false} />}
           <WorkoutCard workout={workout} loading={false} />
-          <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-5 text-center">
-            <p className="text-sm text-[#F0F0F0] mb-2">You already checked in this morning.</p>
+          <div className="bg-surface border border-border rounded-xl p-5 text-center">
+            <p className="text-sm text-text mb-2">You already checked in this morning.</p>
             {existingResponse && (
-              <p className="text-xs text-[#888888] mt-2 leading-relaxed">{existingResponse}</p>
+              <p className="text-xs text-text-muted mt-2 leading-relaxed">{existingResponse}</p>
             )}
             <button
               onClick={() => navigate('/')}
-              className="mt-4 text-sm text-[#888888] hover:text-[#F0F0F0]"
+              className="mt-4 text-sm text-text-muted hover:text-text"
             >
               Back to home
             </button>
@@ -284,16 +284,16 @@ export default function Morning() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0D0D0D] flex flex-col px-6 py-6 animate-page-in">
+    <div className="min-h-screen bg-bg flex flex-col px-5 py-6 pb-20 animate-page-in">
       {/* Back button */}
       <button
         onClick={() => navigate('/')}
-        className="text-sm text-[#888888] hover:text-[#F0F0F0] self-start mb-6"
+        className="text-sm text-text-muted hover:text-text self-start mb-6"
       >
         ← Back
       </button>
 
-      <h1 className="text-lg font-semibold text-[#F0F0F0] mb-6">Morning check-in</h1>
+      <h1 className="text-lg font-semibold text-text mb-6">Morning check-in</h1>
 
       <div className="space-y-4 flex-1">
         <PromptCard title="Coach's note" text={morningText} loading={loading} />
@@ -301,7 +301,7 @@ export default function Morning() {
 
         {!loading && !responded && (
           <div className="pt-4">
-            <p className="text-xs text-[#888888] text-center mb-4">
+            <p className="text-xs text-text-muted text-center mb-4">
               {saving ? 'Saving...' : 'Anything to flag before today\'s session?'}
             </p>
             <VoiceRecorder onTranscript={handleResponse} disabled={saving} />
@@ -309,11 +309,11 @@ export default function Morning() {
         )}
 
         {responded && (
-          <div className="bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl p-5 text-center">
-            <p className="text-sm text-[#F0F0F0]">Logged. Have a good session.</p>
+          <div className="bg-surface border border-border rounded-xl p-5 text-center">
+            <p className="text-sm text-text">Logged. Have a good session.</p>
             <button
               onClick={() => navigate('/')}
-              className="mt-4 text-sm text-[#888888] hover:text-[#F0F0F0]"
+              className="mt-4 text-sm text-text-muted hover:text-text"
             >
               Back to home
             </button>

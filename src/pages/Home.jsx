@@ -68,7 +68,7 @@ export default function Home() {
           <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider">This week</h3>
           {streak > 0 && (
             <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-semibold text-text">{streak}</span>
+              <span className="text-2xl font-semibold text-accent">{streak}</span>
               <span className="text-xs text-text-muted">day streak</span>
             </div>
           )}
@@ -108,7 +108,7 @@ export default function Home() {
       {nextAction && (
         <button
           onClick={() => navigate(nextAction.path)}
-          className="w-full h-14 bg-white text-bg font-semibold rounded-xl hover:bg-[#E0E0E0] active:scale-[0.98] transition-all"
+          className="w-full h-14 bg-white text-bg font-semibold rounded-xl hover:bg-white/90 active:scale-[0.98] transition-all"
         >
           {nextAction.label}
         </button>
@@ -116,6 +116,9 @@ export default function Home() {
 
       {tasksComplete && (
         <div className="bg-surface border border-border rounded-xl p-5 text-center">
+          <svg className="w-8 h-8 text-success mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
           <p className="text-sm text-text-muted">You're done for today. Rest up.</p>
         </div>
       )}

@@ -14,7 +14,6 @@ function getTodayDate() {
 
 function parseSplit(splitString) {
   if (!splitString) return ['Full Body']
-  // Handle common formats: "Push/Pull/Legs", "Push, Pull, Legs", "Upper Lower"
   const parts = splitString.split(/[/,]|\band\b/i).map((s) => s.trim()).filter(Boolean)
   return parts.length > 0 ? parts : ['Full Body']
 }
@@ -23,11 +22,9 @@ function getNextSessionType(splitTypes, recentWorkouts) {
   if (splitTypes.length <= 1) return splitTypes[0]
   if (!recentWorkouts || recentWorkouts.length === 0) return splitTypes[0]
 
-  // Find the last session type from recent workouts
   const lastType = recentWorkouts[0]?.workout_json?.session_type
   if (!lastType) return splitTypes[0]
 
-  // Find where we are in the rotation and advance
   const lowerSplits = splitTypes.map((s) => s.toLowerCase())
   const lastIndex = lowerSplits.indexOf(lastType.toLowerCase())
   if (lastIndex === -1) return splitTypes[0]
@@ -57,7 +54,6 @@ export default function Morning() {
 
         const today = getTodayDate()
 
-        // Check for existing morning log — avoid re-generating
         const { data: existingLog } = await supabase
           .from('daily_logs')
           .select('*')
@@ -88,7 +84,6 @@ export default function Morning() {
           return
         }
 
-        // Check for existing workout
         let { data: existingWorkout } = await supabase
           .from('workouts')
           .select('*')
@@ -97,7 +92,6 @@ export default function Morning() {
           .single()
 
         if (!existingWorkout) {
-          // Determine next session type from split rotation
           const splitTypes = parseSplit(profile.training_split)
           const { data: recentWorkouts } = await supabase
             .from('workouts')
@@ -108,7 +102,6 @@ export default function Morning() {
 
           const sessionType = getNextSessionType(splitTypes, recentWorkouts || [])
 
-          // Get last session of this specific type for progression
           const lastSession = (recentWorkouts || []).find(
             (w) => w.workout_json?.session_type?.toLowerCase() === sessionType.toLowerCase()
           ) || null
@@ -148,7 +141,6 @@ export default function Morning() {
         if (cancelled) return
         setWorkout(existingWorkout?.workout_json || null)
 
-        // Get last evening log for morning prompt
         const { data: lastEvening } = await supabase
           .from('daily_logs')
           .select('structured')
@@ -158,7 +150,6 @@ export default function Morning() {
           .limit(1)
           .single()
 
-        // Get recent patterns (last 7 evening logs)
         const { data: recentLogs } = await supabase
           .from('daily_logs')
           .select('structured, log_date')
@@ -178,7 +169,6 @@ export default function Morning() {
         if (!cancelled) {
           setMorningText(text)
           setLoading(false)
-          // Cache for offline access
           try {
             localStorage.setItem('morning_cache', JSON.stringify({
               date: today,
@@ -189,7 +179,6 @@ export default function Morning() {
         }
       } catch (err) {
         if (!cancelled) {
-          // Try loading from offline cache
           try {
             const cached = JSON.parse(localStorage.getItem('morning_cache') || 'null')
             if (cached && cached.date === getTodayDate()) {
@@ -241,39 +230,13 @@ export default function Morning() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-6">
-        <p className="text-sm text-error mb-4">{error}</p>
-        <button
-          onClick={() => navigate('/')}
-          className="text-sm text-text-muted hover:text-text"
-        >
-          Back to home
-        </button>
-      </div>
-    )
-  }
-
-  if (alreadyDone) {
-    return (
-      <div className="min-h-screen bg-bg flex flex-col px-5 py-6 pb-20 animate-page-in">
-        <button
-          onClick={() => navigate('/')}
-          className="text-sm text-text-muted hover:text-text self-start mb-6"
-        >
-          ← Back
-        </button>
-        <h1 className="text-lg font-semibold text-text mb-6">Morning check-in</h1>
-        <div className="space-y-4">
-          {morningText && <PromptCard title="Coach's note" text={morningText} loading={false} />}
-          <WorkoutCard workout={workout} loading={false} />
+      <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-5 pb-20">
+        <div className="w-full max-w-sm">
           <div className="bg-surface border border-border rounded-xl p-5 text-center">
-            <p className="text-sm text-text mb-2">You already checked in this morning.</p>
-            {existingResponse && (
-              <p className="text-xs text-text-muted mt-2 leading-relaxed">{existingResponse}</p>
-            )}
+            <p className="text-sm text-error mb-4">{error}</p>
             <button
               onClick={() => navigate('/')}
-              className="mt-4 text-sm text-text-muted hover:text-text"
+              className="text-sm text-text-muted hover:text-text transition-colors"
             >
               Back to home
             </button>
@@ -283,19 +246,37 @@ export default function Morning() {
     )
   }
 
+  if (alreadyDone) {
+    return (
+      <div className="min-h-screen bg-bg flex flex-col px-5 pt-safe pb-20 animate-page-in">
+        <div className="py-6">
+          <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider">Morning check-in</h3>
+          <h1 className="text-xl font-semibold text-text mt-1">Already done</h1>
+        </div>
+
+        <div className="space-y-3">
+          {morningText && <PromptCard title="Coach's note" text={morningText} loading={false} />}
+          <WorkoutCard workout={workout} loading={false} />
+
+          {existingResponse && (
+            <div className="bg-surface border border-border rounded-xl p-4">
+              <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-2">Your response</h3>
+              <p className="text-sm text-text leading-relaxed">{existingResponse}</p>
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="min-h-screen bg-bg flex flex-col px-5 py-6 pb-20 animate-page-in">
-      {/* Back button */}
-      <button
-        onClick={() => navigate('/')}
-        className="text-sm text-text-muted hover:text-text self-start mb-6"
-      >
-        ← Back
-      </button>
+    <div className="min-h-screen bg-bg flex flex-col px-5 pt-safe pb-20 animate-page-in">
+      <div className="py-6">
+        <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider">Morning</h3>
+        <h1 className="text-xl font-semibold text-text mt-1">Check-in</h1>
+      </div>
 
-      <h1 className="text-lg font-semibold text-text mb-6">Morning check-in</h1>
-
-      <div className="space-y-4 flex-1">
+      <div className="space-y-3 flex-1">
         <PromptCard title="Coach's note" text={morningText} loading={loading} />
         <WorkoutCard workout={workout} loading={loading} />
 
@@ -310,13 +291,10 @@ export default function Morning() {
 
         {responded && (
           <div className="bg-surface border border-border rounded-xl p-5 text-center">
+            <svg className="w-8 h-8 text-success mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
             <p className="text-sm text-text">Logged. Have a good session.</p>
-            <button
-              onClick={() => navigate('/')}
-              className="mt-4 text-sm text-text-muted hover:text-text"
-            >
-              Back to home
-            </button>
           </div>
         )}
       </div>

@@ -65,15 +65,13 @@ export default function Weekly() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Not authenticated')
 
-      // Fetch last 7 days of logs
       const { data: last7Logs } = await supabase
         .from('daily_logs')
         .select('*')
         .eq('user_id', user.id)
         .order('log_date', { ascending: false })
-        .limit(14) // 7 days x 2 types
+        .limit(14)
 
-      // Fetch previous program
       const { data: prevProgram } = await supabase
         .from('weekly_programs')
         .select('program_json')
@@ -82,7 +80,6 @@ export default function Weekly() {
         .limit(1)
         .single()
 
-      // Generate program
       const programPrompt = buildWeeklyProgramPrompt({
         profile,
         last7Logs: last7Logs || [],
@@ -92,7 +89,6 @@ export default function Weekly() {
       const programJson = JSON.parse(programResponse)
       setProgram(programJson)
 
-      // Generate recap
       const recapPrompt = buildWeeklyRecapPrompt({
         last7Logs: last7Logs || [],
         weeklyProgram: programJson,
@@ -100,7 +96,6 @@ export default function Weekly() {
       const recapResponse = await callClaude(recapPrompt, 'Generate the weekly recap.')
       setRecap(recapResponse)
 
-      // Save
       const weekStart = getWeekStart()
       await supabase.from('weekly_programs').upsert({
         user_id: user.id,
@@ -118,16 +113,11 @@ export default function Weekly() {
   const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
   return (
-    <div className="min-h-screen bg-bg flex flex-col px-5 py-6 pb-20 animate-page-in">
-      {/* Back */}
-      <button
-        onClick={() => navigate('/')}
-        className="text-sm text-text-muted hover:text-text self-start mb-6"
-      >
-        ← Back
-      </button>
-
-      <h1 className="text-lg font-semibold text-text mb-6">Weekly Program</h1>
+    <div className="min-h-screen bg-bg flex flex-col px-5 pt-safe pb-20 animate-page-in">
+      <div className="py-6">
+        <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider">Program</h3>
+        <h1 className="text-xl font-semibold text-text mt-1">This week</h1>
+      </div>
 
       {loading ? (
         <div className="flex items-center justify-center py-12">
@@ -139,38 +129,27 @@ export default function Weekly() {
           <button
             onClick={generateProgram}
             disabled={generating}
-            className="w-full h-12 bg-white text-bg font-semibold rounded-xl hover:bg-[#E0E0E0] active:scale-[0.98] transition-all disabled:opacity-50"
+            className="w-full h-14 bg-white text-bg font-semibold rounded-xl hover:bg-white/90 active:scale-[0.98] transition-all disabled:opacity-50"
           >
             {generating ? 'Generating...' : 'Generate this week\'s program'}
           </button>
         </div>
       ) : (
-        <div className="space-y-4 pb-8">
-          {/* Recap */}
+        <div className="space-y-3">
           <WeeklyRecap recap={recap} loading={generating} />
 
-          {/* Day cards */}
           {DAYS.map((day) => {
             const dayPlan = program.find((d) => d.day === day)
             if (!dayPlan) return null
 
-            if (dayPlan.type === 'rest') {
+            if (dayPlan.type === 'rest' || dayPlan.type === 'active_recovery') {
               return (
                 <div key={day} className="bg-surface border border-border rounded-xl p-4">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-semibold text-text">{day}</span>
-                    <span className="text-xs text-text-muted">Rest</span>
-                  </div>
-                </div>
-              )
-            }
-
-            if (dayPlan.type === 'active_recovery') {
-              return (
-                <div key={day} className="bg-surface border border-border rounded-xl p-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold text-text">{day}</span>
-                    <span className="text-xs text-text-muted">Active Recovery</span>
+                    <span className="text-xs text-text-dim">
+                      {dayPlan.type === 'rest' ? 'Rest' : 'Active Recovery'}
+                    </span>
                   </div>
                 </div>
               )
@@ -178,13 +157,12 @@ export default function Weekly() {
 
             return (
               <div key={day}>
-                <p className="text-xs text-text-muted mb-2 ml-1">{day}</p>
+                <h3 className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-2">{day}</h3>
                 <WorkoutCard workout={dayPlan.workout} />
               </div>
             )
           })}
 
-          {/* Regenerate */}
           <button
             onClick={generateProgram}
             disabled={generating}
@@ -196,7 +174,9 @@ export default function Weekly() {
       )}
 
       {error && (
-        <p className="text-sm text-error text-center mt-4">{error}</p>
+        <div className="bg-surface border border-border rounded-xl p-4 mt-4">
+          <p className="text-sm text-error text-center">{error}</p>
+        </div>
       )}
     </div>
   )

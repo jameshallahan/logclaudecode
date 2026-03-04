@@ -2,7 +2,7 @@ import VoiceRecorder from './VoiceRecorder'
 
 export default function LogCard({ questionNumber, totalQuestions, question, onTranscript, transcript, disabled = false }) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] px-6">
+    <div className="flex flex-col items-center justify-center min-h-[60vh] px-5">
       <div className="w-full max-w-sm">
         <p className="text-xs text-text-muted mb-4 text-center">
           {questionNumber} of {totalQuestions}

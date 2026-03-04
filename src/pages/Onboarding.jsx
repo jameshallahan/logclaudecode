@@ -132,10 +132,10 @@ export default function Onboarding() {
   // Welcome screen
   if (step === 'welcome') {
     return (
-      <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-6 animate-page-in">
+      <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-5 animate-page-in">
         <div className="w-full max-w-sm">
-          <h1 className="text-2xl font-semibold text-text text-center mb-2">Welcome to The Log</h1>
-          <p className="text-sm text-text-muted text-center leading-relaxed mb-6">
+          <h1 className="text-xl font-semibold text-text text-center mb-2">Welcome to The Log</h1>
+          <p className="text-sm text-text-muted text-center leading-relaxed mb-8">
             A few quick details, then 7 voice questions to build your coaching profile.
           </p>
 
@@ -162,13 +162,13 @@ export default function Onboarding() {
             <div className="flex rounded-xl overflow-hidden border border-border">
               <button
                 onClick={() => setUnits('metric')}
-                className={`flex-1 h-10 text-sm font-semibold transition-colors ${units === 'metric' ? 'bg-white text-bg' : 'bg-surface text-text-muted'}`}
+                className={`flex-1 h-10 text-sm font-semibold transition-colors active:scale-[0.98] ${units === 'metric' ? 'bg-white text-bg' : 'bg-surface text-text-muted'}`}
               >
                 Metric
               </button>
               <button
                 onClick={() => setUnits('imperial')}
-                className={`flex-1 h-10 text-sm font-semibold transition-colors ${units === 'imperial' ? 'bg-white text-bg' : 'bg-surface text-text-muted'}`}
+                className={`flex-1 h-10 text-sm font-semibold transition-colors active:scale-[0.98] ${units === 'imperial' ? 'bg-white text-bg' : 'bg-surface text-text-muted'}`}
               >
                 Imperial
               </button>
@@ -223,7 +223,7 @@ export default function Onboarding() {
           <button
             onClick={() => setStep('questions')}
             disabled={!welcomeValid}
-            className="w-full h-12 mt-6 bg-white text-bg font-semibold rounded-xl hover:bg-[#E0E0E0] active:scale-[0.98] transition-all disabled:opacity-50"
+            className="w-full h-14 mt-6 bg-white text-bg font-semibold rounded-xl hover:bg-white/90 active:scale-[0.98] transition-all disabled:opacity-50"
           >
             Let's go
           </button>
@@ -239,15 +239,15 @@ export default function Onboarding() {
 
     return (
       <div className="min-h-screen bg-bg flex flex-col animate-page-in">
-        {/* Progress bar */}
+        {/* Progress bar — accent color */}
         <div className="h-1 bg-surface">
           <div
-            className="h-full bg-white transition-all duration-300"
+            className="h-full bg-accent transition-all duration-300"
             style={{ width: `${((questionIndex + (hasTranscript ? 1 : 0)) / QUESTIONS.length) * 100}%` }}
           />
         </div>
 
-        <div className="flex-1 flex flex-col items-center justify-center px-6">
+        <div className="flex-1 flex flex-col items-center justify-center px-5">
           <div key={questionIndex} className="w-full max-w-sm animate-page-in">
             <p className="text-xs text-text-muted mb-4 text-center">
               {questionIndex + 1} of {QUESTIONS.length}
@@ -264,7 +264,7 @@ export default function Onboarding() {
                 </div>
                 <button
                   onClick={handleNext}
-                  className="w-full h-12 bg-white text-bg font-semibold rounded-xl hover:bg-[#E0E0E0] active:scale-[0.98] transition-all"
+                  className="w-full h-14 bg-white text-bg font-semibold rounded-xl hover:bg-white/90 active:scale-[0.98] transition-all"
                 >
                   {questionIndex < QUESTIONS.length - 1 ? 'Next' : 'Build my profile'}
                 </button>
@@ -290,9 +290,9 @@ export default function Onboarding() {
 
   // Review + saving
   return (
-    <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-6 animate-page-in">
+    <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-5 animate-page-in">
       <div className="w-full max-w-sm">
-        <h2 className="text-lg font-semibold text-text text-center mb-6">
+        <h2 className="text-xl font-semibold text-text text-center mb-6">
           {step === 'saving' ? 'Setting up your profile...' : 'Your coaching profile'}
         </h2>
 
@@ -322,7 +322,7 @@ export default function Onboarding() {
                 <button
                   onClick={handleConfirm}
                   disabled={step === 'saving'}
-                  className="w-full h-12 bg-white text-bg font-semibold rounded-xl hover:bg-[#E0E0E0] active:scale-[0.98] transition-all disabled:opacity-50"
+                  className="w-full h-14 bg-white text-bg font-semibold rounded-xl hover:bg-white/90 active:scale-[0.98] transition-all disabled:opacity-50"
                 >
                   {step === 'saving' ? 'Saving...' : "Looks right \u2014 let\u2019s go"}
                 </button>
@@ -339,7 +339,9 @@ export default function Onboarding() {
         )}
 
         {error && (
-          <p className="text-sm text-error text-center mt-4">{error}</p>
+          <div className="bg-surface border border-border rounded-xl p-4 mt-4">
+            <p className="text-sm text-error text-center">{error}</p>
+          </div>
         )}
       </div>
     </div>

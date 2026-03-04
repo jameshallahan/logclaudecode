@@ -17,15 +17,15 @@ export default class ErrorBoundary extends Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-6">
+        <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-5">
           <div className="w-full max-w-sm text-center">
-            <h1 className="text-lg font-semibold text-text mb-2">Something went wrong</h1>
+            <h1 className="text-xl font-semibold text-text mb-2">Something went wrong</h1>
             <p className="text-sm text-text-muted mb-6">
               {this.state.error?.message || 'An unexpected error occurred.'}
             </p>
             <button
               onClick={this.handleReset}
-              className="w-full h-12 bg-white text-bg font-semibold rounded-xl hover:bg-[#E0E0E0] active:scale-[0.98] transition-all mb-3"
+              className="w-full h-14 bg-white text-bg font-semibold rounded-xl hover:bg-white/90 active:scale-[0.98] transition-all mb-3"
             >
               Try again
             </button>

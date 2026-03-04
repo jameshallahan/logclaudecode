@@ -68,14 +68,14 @@ function AuthScreen() {
 
   if (awaitingVerification) {
     return (
-      <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-5">
+      <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-5 animate-page-in">
         <div className="w-full max-w-sm text-center">
-          <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-surface flex items-center justify-center">
-            <svg className="w-8 h-8 text-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-accent-dim/30 border border-accent-dim flex items-center justify-center">
+            <svg className="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-semibold text-text mb-2">Check your email</h1>
+          <h1 className="text-xl font-semibold text-text mb-2">Check your email</h1>
           <p className="text-sm text-text-muted leading-relaxed mb-2">
             We sent a verification link to
           </p>
@@ -86,7 +86,7 @@ function AuthScreen() {
 
           <button
             onClick={() => { setAwaitingVerification(false); setIsSignUp(false) }}
-            className="w-full h-12 bg-white text-bg font-semibold rounded-xl hover:bg-[#E0E0E0] active:scale-[0.98] transition-all mb-3"
+            className="w-full h-14 bg-white text-bg font-semibold rounded-xl hover:bg-white/90 active:scale-[0.98] transition-all mb-3"
           >
             Back to sign in
           </button>
@@ -100,7 +100,9 @@ function AuthScreen() {
           </button>
 
           {error && (
-            <p className="text-sm text-error text-center mt-4">{error}</p>
+            <div className="bg-surface border border-border rounded-xl p-4 mt-4">
+              <p className="text-sm text-error text-center">{error}</p>
+            </div>
           )}
         </div>
       </div>
@@ -108,12 +110,30 @@ function AuthScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-5">
+    <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-5 animate-page-in">
       <div className="w-full max-w-sm">
-        <h1 className="text-2xl font-semibold text-text text-center mb-2">The Log</h1>
-        <p className="text-sm text-text-muted text-center mb-8">Voice-first AI coaching</p>
+        {/* Brand */}
+        <div className="flex flex-col items-center mb-10">
+          <div className="w-16 h-16 rounded-2xl bg-surface border border-border flex items-center justify-center mb-5">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-accent">
+              <path
+                d="M12 1a4 4 0 0 0-4 4v7a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z"
+                fill="currentColor"
+              />
+              <path
+                d="M19 10v2a7 7 0 0 1-14 0v-2"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+              <line x1="12" y1="19" x2="12" y2="23" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </div>
+          <h1 className="text-xl font-semibold text-text mb-1">The Log</h1>
+          <p className="text-sm text-text-muted">Voice-first AI coaching</p>
+        </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3">
           <input
             type="email"
             placeholder="Email"
@@ -132,13 +152,15 @@ function AuthScreen() {
             className="w-full h-12 bg-surface border border-border rounded-xl px-4 text-sm text-text placeholder-text-muted outline-none focus:border-text-muted transition-colors"
           />
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full h-12 bg-white text-bg font-semibold rounded-xl hover:bg-[#E0E0E0] active:scale-[0.98] transition-all disabled:opacity-50"
-          >
-            {loading ? 'Loading...' : isSignUp ? 'Sign up' : 'Sign in'}
-          </button>
+          <div className="pt-1">
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full h-14 bg-white text-bg font-semibold rounded-xl hover:bg-white/90 active:scale-[0.98] transition-all disabled:opacity-50"
+            >
+              {loading ? 'Loading...' : isSignUp ? 'Sign up' : 'Sign in'}
+            </button>
+          </div>
         </form>
 
         <button
@@ -149,7 +171,9 @@ function AuthScreen() {
         </button>
 
         {error && (
-          <p className="text-sm text-error text-center mt-4">{error}</p>
+          <div className="bg-surface border border-border rounded-xl p-4 mt-4">
+            <p className="text-sm text-error text-center">{error}</p>
+          </div>
         )}
       </div>
     </div>

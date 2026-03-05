@@ -230,7 +230,7 @@ export default function Evening() {
     return (
       <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-5 pb-20">
         <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="text-sm text-text-muted">Processing your log...</p>
+        <p className="text-sm text-text-muted">Closing out the day...</p>
       </div>
     )
   }

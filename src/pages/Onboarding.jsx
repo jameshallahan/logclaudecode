@@ -132,20 +132,21 @@ export default function Onboarding() {
   // Welcome screen
   if (step === 'welcome') {
     return (
-      <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-5 animate-page-in">
-        <div className="w-full max-w-sm">
-          <h1 className="text-xl font-semibold text-text text-center mb-2">Welcome to The Log</h1>
-          <p className="text-sm text-text-muted text-center leading-relaxed mb-8">
-            A few quick details, then 7 voice questions to build your coaching profile.
-          </p>
+      <div className="min-h-screen bg-bg flex flex-col px-5 pt-safe pb-safe animate-page-in">
+        <div className="pt-12 pb-8">
+          <p className="text-[11px] font-semibold text-accent uppercase tracking-[0.15em] mb-4">Training Coach</p>
+          <h1 className="text-4xl font-semibold text-text tracking-tight leading-tight">The Log</h1>
+          <p className="text-sm text-text-muted mt-2">A few details to build your profile.</p>
+        </div>
 
+        <div className="flex-1 flex flex-col justify-between pb-10">
           <div className="space-y-3">
             <input
               type="text"
               placeholder="First name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full h-12 bg-surface border border-border rounded-xl px-4 text-sm text-text placeholder-text-muted outline-none focus:border-text-muted transition-colors text-center"
+              className="w-full h-12 bg-surface border border-border rounded-xl px-4 text-sm text-text placeholder-text-muted outline-none focus:border-text-muted transition-colors"
             />
 
             <input
@@ -155,7 +156,7 @@ export default function Onboarding() {
               onChange={(e) => setAge(e.target.value)}
               min="13"
               max="120"
-              className="w-full h-12 bg-surface border border-border rounded-xl px-4 text-sm text-text placeholder-text-muted outline-none focus:border-text-muted transition-colors text-center"
+              className="w-full h-12 bg-surface border border-border rounded-xl px-4 text-sm text-text placeholder-text-muted outline-none focus:border-text-muted transition-colors"
             />
 
             {/* Unit toggle */}
@@ -183,7 +184,7 @@ export default function Onboarding() {
                 onChange={(e) => setHeight(e.target.value)}
                 min="100"
                 max="250"
-                className="w-full h-12 bg-surface border border-border rounded-xl px-4 text-sm text-text placeholder-text-muted outline-none focus:border-text-muted transition-colors text-center"
+                className="w-full h-12 bg-surface border border-border rounded-xl px-4 text-sm text-text placeholder-text-muted outline-none focus:border-text-muted transition-colors"
               />
             ) : (
               <div className="flex gap-3">
@@ -194,7 +195,7 @@ export default function Onboarding() {
                   onChange={(e) => setHeightFt(e.target.value)}
                   min="3"
                   max="8"
-                  className="flex-1 h-12 bg-surface border border-border rounded-xl px-4 text-sm text-text placeholder-text-muted outline-none focus:border-text-muted transition-colors text-center"
+                  className="flex-1 h-12 bg-surface border border-border rounded-xl px-4 text-sm text-text placeholder-text-muted outline-none focus:border-text-muted transition-colors"
                 />
                 <input
                   type="number"
@@ -203,7 +204,7 @@ export default function Onboarding() {
                   onChange={(e) => setHeightIn(e.target.value)}
                   min="0"
                   max="11"
-                  className="flex-1 h-12 bg-surface border border-border rounded-xl px-4 text-sm text-text placeholder-text-muted outline-none focus:border-text-muted transition-colors text-center"
+                  className="flex-1 h-12 bg-surface border border-border rounded-xl px-4 text-sm text-text placeholder-text-muted outline-none focus:border-text-muted transition-colors"
                 />
               </div>
             )}
@@ -216,7 +217,7 @@ export default function Onboarding() {
               onChange={(e) => setWeight(e.target.value)}
               min="30"
               max="500"
-              className="w-full h-12 bg-surface border border-border rounded-xl px-4 text-sm text-text placeholder-text-muted outline-none focus:border-text-muted transition-colors text-center"
+              className="w-full h-12 bg-surface border border-border rounded-xl px-4 text-sm text-text placeholder-text-muted outline-none focus:border-text-muted transition-colors"
             />
           </div>
 
@@ -225,7 +226,7 @@ export default function Onboarding() {
             disabled={!welcomeValid}
             className="w-full h-14 mt-6 bg-white text-bg font-semibold rounded-xl hover:bg-white/90 active:scale-[0.98] transition-all disabled:opacity-50"
           >
-            Let's go
+            Continue
           </button>
         </div>
       </div>

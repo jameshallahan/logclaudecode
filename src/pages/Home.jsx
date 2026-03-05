@@ -85,8 +85,8 @@ export default function Home() {
           onClick={() => navigate('/morning')}
           className="bg-surface border border-border rounded-xl p-4 text-left active:scale-[0.98] transition-all"
         >
-          <p className="text-xs text-text-muted mb-1">Morning</p>
-          <p className={`text-lg font-semibold ${morningDone ? 'text-success' : 'text-text'}`}>
+          <p className="text-xs text-text-muted mb-2">Morning</p>
+          <p className={`text-2xl font-semibold ${morningDone ? 'text-success' : 'text-text'}`}>
             {morningDone ? 'Done' : 'Pending'}
           </p>
         </button>
@@ -95,8 +95,8 @@ export default function Home() {
           onClick={() => navigate('/evening')}
           className="bg-surface border border-border rounded-xl p-4 text-left active:scale-[0.98] transition-all"
         >
-          <p className="text-xs text-text-muted mb-1">Evening</p>
-          <p className={`text-lg font-semibold ${eveningDone ? 'text-success' : 'text-text'}`}>
+          <p className="text-xs text-text-muted mb-2">Evening</p>
+          <p className={`text-2xl font-semibold ${eveningDone ? 'text-success' : 'text-text'}`}>
             {eveningDone ? 'Done' : 'Pending'}
           </p>
         </button>
@@ -115,11 +115,15 @@ export default function Home() {
       )}
 
       {tasksComplete && (
-        <div className="bg-surface border border-border rounded-xl p-5 text-center">
-          <svg className="w-8 h-8 text-success mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
-          <p className="text-sm text-text-muted">You're done for today. Rest up.</p>
+        <div className="bg-surface border border-border rounded-xl p-5">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-success/10 flex items-center justify-center flex-shrink-0">
+              <svg className="w-4 h-4 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <p className="text-sm text-text-muted">Done for today. Rest up.</p>
+          </div>
         </div>
       )}
     </div>

@@ -232,7 +232,7 @@ export default function Morning() {
     return (
       <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-5 pb-20">
         <div className="w-full max-w-sm">
-          <div className="bg-surface border border-border rounded-xl p-5 text-center">
+          <div className="bg-surface border border-border rounded-xl p-5">
             <p className="text-sm text-error mb-4">{error}</p>
             <button
               onClick={() => navigate('/')}

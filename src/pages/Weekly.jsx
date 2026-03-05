@@ -144,13 +144,11 @@ export default function Weekly() {
 
             if (dayPlan.type === 'rest' || dayPlan.type === 'active_recovery') {
               return (
-                <div key={day} className="bg-surface border border-border rounded-xl p-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold text-text">{day}</span>
-                    <span className="text-xs text-text-dim">
-                      {dayPlan.type === 'rest' ? 'Rest' : 'Active Recovery'}
-                    </span>
-                  </div>
+                <div key={day} className="border border-border rounded-xl p-4 flex items-center justify-between">
+                  <span className="text-sm text-text-muted">{day}</span>
+                  <span className="text-xs text-text-dim uppercase tracking-wider">
+                    {dayPlan.type === 'rest' ? 'Rest' : 'Active Recovery'}
+                  </span>
                 </div>
               )
             }

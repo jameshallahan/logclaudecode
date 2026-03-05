@@ -68,21 +68,20 @@ function AuthScreen() {
 
   if (awaitingVerification) {
     return (
-      <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-5 animate-page-in">
-        <div className="w-full max-w-sm text-center">
-          <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-accent-dim/30 border border-accent-dim flex items-center justify-center">
-            <svg className="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-          </div>
-          <h1 className="text-xl font-semibold text-text mb-2">Check your email</h1>
-          <p className="text-sm text-text-muted leading-relaxed mb-2">
-            We sent a verification link to
-          </p>
-          <p className="text-sm text-text font-semibold mb-6">{email}</p>
-          <p className="text-sm text-text-muted leading-relaxed mb-8">
-            Click the link to verify your account, then come back here and sign in.
-          </p>
+      <div className="min-h-screen bg-bg flex flex-col px-5 pt-safe pb-safe animate-page-in">
+        {/* Brand — top half */}
+        <div className="flex-1 flex flex-col justify-end pb-10">
+          <p className="text-[11px] font-semibold text-accent uppercase tracking-[0.15em] mb-5">Training Coach</p>
+          <h1 className="text-6xl font-semibold text-text tracking-tight leading-none">
+            The<br />Log
+          </h1>
+        </div>
+
+        {/* Content — bottom half */}
+        <div className="pb-10">
+          <h2 className="text-xl font-semibold text-text mb-2">Check your email</h2>
+          <p className="text-sm text-text-muted leading-relaxed mb-1">Verification link sent to</p>
+          <p className="text-sm font-semibold text-text mb-8">{email}</p>
 
           <button
             onClick={() => { setAwaitingVerification(false); setIsSignUp(false) }}
@@ -101,7 +100,7 @@ function AuthScreen() {
 
           {error && (
             <div className="bg-surface border border-border rounded-xl p-4 mt-4">
-              <p className="text-sm text-error text-center">{error}</p>
+              <p className="text-sm text-error">{error}</p>
             </div>
           )}
         </div>
@@ -110,27 +109,30 @@ function AuthScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-5 animate-page-in">
-      <div className="w-full max-w-sm">
-        {/* Brand */}
-        <div className="flex flex-col items-center mb-10">
-          <div className="w-16 h-16 rounded-2xl bg-surface border border-border flex items-center justify-center mb-5">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" className="text-accent">
-              <path
-                d="M12 1a4 4 0 0 0-4 4v7a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z"
-                fill="currentColor"
-              />
-              <path
-                d="M19 10v2a7 7 0 0 1-14 0v-2"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-              <line x1="12" y1="19" x2="12" y2="23" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            </svg>
-          </div>
-          <h1 className="text-xl font-semibold text-text mb-1">The Log</h1>
-          <p className="text-sm text-text-muted">Voice-first AI coaching</p>
+    <div className="min-h-screen bg-bg flex flex-col px-5 pt-safe pb-safe animate-page-in">
+      {/* Brand — owns the top half of the screen */}
+      <div className="flex-1 flex flex-col justify-end pb-10">
+        <p className="text-[11px] font-semibold text-accent uppercase tracking-[0.15em] mb-5">Training Coach</p>
+        <h1 className="text-6xl font-semibold text-text tracking-tight leading-none">
+          The<br />Log
+        </h1>
+      </div>
+
+      {/* Form — anchored to the bottom */}
+      <div className="pb-10">
+        <div className="flex rounded-xl overflow-hidden border border-border mb-4">
+          <button
+            onClick={() => { setIsSignUp(false); setError(null) }}
+            className={`flex-1 h-11 text-sm font-semibold transition-colors ${!isSignUp ? 'bg-white text-bg' : 'bg-surface text-text-muted hover:text-text'}`}
+          >
+            Sign in
+          </button>
+          <button
+            onClick={() => { setIsSignUp(true); setError(null) }}
+            className={`flex-1 h-11 text-sm font-semibold transition-colors ${isSignUp ? 'bg-white text-bg' : 'bg-surface text-text-muted hover:text-text'}`}
+          >
+            Sign up
+          </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-3">
@@ -151,28 +153,20 @@ function AuthScreen() {
             minLength={6}
             className="w-full h-12 bg-surface border border-border rounded-xl px-4 text-sm text-text placeholder-text-muted outline-none focus:border-text-muted transition-colors"
           />
-
           <div className="pt-1">
             <button
               type="submit"
               disabled={loading}
               className="w-full h-14 bg-white text-bg font-semibold rounded-xl hover:bg-white/90 active:scale-[0.98] transition-all disabled:opacity-50"
             >
-              {loading ? 'Loading...' : isSignUp ? 'Sign up' : 'Sign in'}
+              {loading ? 'Loading...' : isSignUp ? 'Create account' : 'Sign in'}
             </button>
           </div>
         </form>
 
-        <button
-          onClick={() => { setIsSignUp(!isSignUp); setError(null) }}
-          className="w-full mt-4 text-sm text-text-muted hover:text-text transition-colors text-center"
-        >
-          {isSignUp ? 'Already have an account? Sign in' : 'Need an account? Sign up'}
-        </button>
-
         {error && (
           <div className="bg-surface border border-border rounded-xl p-4 mt-4">
-            <p className="text-sm text-error text-center">{error}</p>
+            <p className="text-sm text-error">{error}</p>
           </div>
         )}
       </div>
